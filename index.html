@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en"  style="font-smooth: never; -webkit-font-smoothing : none;" >
+	<head>
+		<title>Diogo Slepetys - Freelancer</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<meta name="theme-color" content="#008888">
+		
+		<style>
+			body {
+				margin: 0px;
+				background-color: #777779;
+				overflow: hidden;
+			}
+		</style>
+		
+		<link href="PortfolioResources/styles.css" rel="stylesheet">
+		
+		<!--Font Awesome-->
+		<script src="https://use.fontawesome.com/2747e124e8.js"></script>
+		
+		<!--Google Fonts-->
+		<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Exo" rel="stylesheet">
+		
+		<link rel="manifest" href="PortfolioResources/manifest.json">
+		
+	</head>
+	
+	<body style="position: absolute;">
+		
+		<!--
+		<div id="menuContainerR" class="slide-container" style="position: fixed; top: 0%; right: 0%; width: 35%; height: 100%">
+			<div id="MenuR" class="img-pixelated slide-in" style="position: fixed; top: 0%; right: 0%; box-sizing: border-box; display:block;">
+				<div id="Text1" class="main-text" style="position: relative; top: 2%; left: 10%; width: 80%; box-sizing: border-box; text-align: right;"><h2>Looking for something else?</h2><p>Let me know!</p></div>
+				<div id="rButton1" class="img-pixelated slide-in-tabs-3 button-1" style="position: fixed; top: 30%; right: 1%; box-sizing: border-box; display:block; background-color: white; background-image: url('text.png');"></div>
+				<div id="rButton2" class="img-pixelated slide-in-tabs-2 button-1" style="position: fixed; top: 45%; right: 1%; box-sizing: border-box; display:block; background-color: white;"></div>
+				<div id="rButton3" class="img-pixelated slide-in-tabs-1 button-1" style="position: fixed; top: 60%; right: 1%; box-sizing: border-box; display:block; background-color: white;"></div>
+				<div id="TextFooter" class="main-text" style="position: absolute; top: 90%; left: 10%; width: 80%; box-sizing: border-box; text-align: right;"><p>Special thanks to the ThreeJS community</p></div>
+			</div>
+		</div>
+		-->
+		
+		<div id="totalContainerBio" class="total-container" style="position: fixed; top: 0%; right: 0%; width: 0%; height: 96%;  z-index: 10;">
+			
+			<div onclick="loadContainer(0)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+			<!--<div id="Text1" class="main-text" style="position: relative; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left; overflow: hidden;">
+			-->
+			<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 5%; height: 75%; overflow-y:scroll;">
+			<h2>More about me</h2>
+			<p>I'm a computer engineer with a passion:<br><br> Watching my code become alive! <br><br>
+			I love to program game logic, having done a few projects with WebGL, Three.js and Unity.
+			I create music as well and have a <a style="color: #008888;" target="_blank" href="https://lunarblank.bandcamp.com/">bandcamp account</a> in case you would like to listen to a tiny bit of my VGM work.
+			<br><br>
+			Finally, I also like to work with Inkscape, Photoshop and Blender, doing some small graphic design works as well as UI's.</p>
+			<br>
+			<h2>Languages, by experience</h2>
+			
+			<p>Javascript, C#, Java, C, Python, C++, GLSL, PHP, Pascal, LabView.</p>
+			<br>
+			
+			<h2>Databases & Frameworks</h2>
+			
+			<p>MySQL, MongoDB, OracleDB, Xamarin, Android Studio and some Qt. </p>
+			</div>
+
+		</div>
+		
+		<div id="totalContainerContact" class="total-container" style="position: fixed; top: 0%; right: 0%; width: 0%; height: 96%;  z-index: 10;">
+			
+			<div onclick="loadContainer(0)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+			<div id="Text1" class="main-text" style="position: relative; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left; overflow: hidden;">
+			<h2>Forms of Contact</h2>
+			<p>You may send me an e-mail: <a style="color: #008888;" target="_blank" href="mailto:diogoslepetys@yahoo.com.br">diogoslepetys@yahoo.com.br</a>
+			<br><br>
+			Or message me on facebook: <a style="color: #008888;" target="_blank" href="https://www.facebook.com/diogo.slepetys"> Diogo Slepetys </a>
+			<br><br>
+			I don't bite!</p>
+			</div>
+
+		</div>
+		
+		<div id="totalContainerPortfolio" class="total-container" style="position: fixed; top: 0%; right: 0%; width: 0%; height: 96%; overflow: hidden; z-index: 10;">
+			
+			<div onclick="loadContainer(0)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+			<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+			<h2>Some of my work</h2>
+			<p>Click the pictures for more!</p>
+
+			</div>
+			<div style="display: flex-inline; margin: 2%; text-align: center; margin-top: 5%; height: 75%; overflow-y:scroll;">
+			
+				<img id="devi-folio"     class="portfolio-image" src="PortfolioResources/4web/portfolio1.jpg" onclick="openFolio(1)"></img>
+				<img id="sl-folio"       class="portfolio-image" src="PortfolioResources/4web/portfolio2.jpg" onclick="openFolio(2)"></img>
+				<img id="oemlette-folio" class="portfolio-image" src="PortfolioResources/4web/portfolio3.jpg" onclick="openFolio(3)"></img>
+				<img id="eureka-folio"   class="portfolio-image" src="PortfolioResources/4web/portfolio4.jpg" onclick="openFolio(4)"></img>
+				<img id="pixel-folio"    class="portfolio-image" src="PortfolioResources/4web/portfolio6.jpg" onclick="openFolio(5)"></img>
+				<img id="bau-folio"      class="portfolio-image" src="PortfolioResources/4web/portfolio5.jpg" onclick="openFolio(6)"></img>
+				
+			
+			</div>
+
+		</div>
+		
+		<!--LightBox Devi-->
+		<div id="light-devi" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-1)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->
+				<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">
+					<h2>Deity's Vial</h2>
+					<p>A Javascript, browser, 3D MMORPG</p>
+
+					<p>This game has a Lazy Loader for downloading assets from a CDN, merging hundreds of thousands of vertices, and adding a new chunk to the world map, as the player moves.</p>
+					<p>Loading was asynchronous and geometry merging and re-indexing was done into a thread (Web Worker).<br>
+					The Pixel Art style, as well as the low poly 3D models, were chosen to improve loading time, otherwise loading screens would have been necessary.</p>
+					<img class="portfolio-image" src="PortfolioResources/4web/portfolio1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" src="PortfolioResources/4web/devi-invent.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" src="PortfolioResources/4web/devi-invent1.jpg" onclick="window.open(this.src);"></img>
+					<p>The interface was done in HTML5 + CSS3.<br>
+					The only library used was Three.js.</p><p>The project had only 6 months of work and was left unfinished, <br>having a Java, non-blocking io sockets, server-side for login, character selection, items DB, etc...</p>
+				</div>	
+			</div>
+		</div>
+		
+		<!--LightBox Sl-->
+		<div id="light-sl" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-2)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->
+				<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">				
+					<h2>Slepetys Plastic Surgery</h2>
+
+					<p>Mobile-friendly responsive website based on a modified Bootstrap, implements a custom google map.</p>
+					<p>There's not much to talk about, you may access the website here: <a style="color: #008888;" target="_blank" href="http://www.slplastica.com">SLplastica</a>.<br>
+					</p>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/slplastica1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" src="PortfolioResources/4web/portfolio2.jpg" onclick="window.open(this.src);"></img>
+					</div>	
+			</div>
+		</div>
+		
+		<!--LightBox Omelette-->
+		<div id="light-om" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-3)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->	
+					<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">
+					<h2>Omelette Tower</h2>
+					<p>A mobile game made in Unity</p>
+
+					<p>This game was a personal project and my way of learning the basics on how to draw with vectors using Inkscape.</p>
+					<p>Some songs were composed for the game, available on my <a style="color: #008888;" target="_blank" href="https://lunarblank.bandcamp.com/album/omelette-tower">bandcamp account</a>.<br>
+					</p>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/om1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/om2.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/om3.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/om6.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/om5.jpg" onclick="window.open(this.src);"></img>
+					</div>
+			</div>
+		</div>
+		
+		<!--LightBox Eureka-->
+		<div id="light-eureka" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-4)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->
+				<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">
+				
+					<h2>MauaEureka</h2>
+					<p>An Android App, made for a university fair</p>
+
+					<p>This app had a login screen, using SOAP protocol, only allowing visitors of the fair to access it.</p>
+					<p>The main goal was to orient people attending to this event. The app contained a map of the booths, a graph to trace a route from the user location to the desired booth, a GPS with the map of the university, and a voting system for the projects in exposition.</p>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu2.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu3.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu4.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu5.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/eu6.jpg" onclick="window.open(this.src);"></img>
+					<p>A heat map was generated after the fair, using the users locations stored into a MySQL DB.</p>
+					<p>I was given 1 month to create this app, so the UI was left unnatended.</p>
+					</div>	
+			</div>
+		</div>
+		
+		<!--LightBox Pixel Art-->
+		<div id="light-pixel" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-5)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->
+				<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">
+				
+					<h2>Pixel Art</h2>
+					<p>Some of my 32x32px art</p>
+
+					<img class="portfolio-image" src="PortfolioResources/4web/sf1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" src="PortfolioResources/4web/sf2.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" src="PortfolioResources/4web/sf3.jpg" onclick="window.open(this.src);"></img>
+
+					</div>	
+			</div>
+		</div>
+		
+		<!--LightBox Bau-->
+		<div id="light-bau" class="total-container" style="visibility:hidden; opacity: 0; position: fixed; z-index: 20; top: 0%; margin:0; right: 0%; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+			<div style="position: fixed; top: 2%; right: 2%; width: 96%; border-radius: 20px; height: 96%; background-color: rgba(230,230,230,1);">
+			
+				<div onclick="openFolio(-6)" class="closex" style="position: absolute; right: 1%; top: 5%; width: 6%; height: 6%; display: block;"><div class="cross"></div><div class="cross" style="transform: rotate(-45deg);"></div></div>
+			
+				<!--<div id="Text1" class="main-text" style="position: relative; margin: 0; top: 2%; left: 4%; width: 80%; box-sizing: border-box; text-align: left;">
+				-->
+				<div id="scrollDiv" class="main-text" style="display: flex-inline; margin: 2%; text-align: center; margin-top: 6%; height: 75%; overflow-y:scroll;">
+				
+					<h2>Bau Slider</h2>
+					<p>A game made in Unity</p>
+
+					<p>This game was my first experience with Unity, and the main goal was to learn the DO's & DON'Ts of the Unity Engine.</p>
+					<p>All the models, textures, songs and codes were produced by me. I was trying to achieve the old Nintendo64 feel and trying to make the asset production faster as well.</p>
+					<p>It uses both the Facebook, and the Google Play API's. For setting high scores and having a look at your friends achievements. A MySQL DB was used to keep track of the user items.</p>
+					<img class="portfolio-image" style="width: 12%;" src="PortfolioResources/4web/ba5.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 16%;" src="PortfolioResources/4web/ba1.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 16%;" src="PortfolioResources/4web/ba2.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 16%;" src="PortfolioResources/4web/ba3.jpg" onclick="window.open(this.src);"></img>
+					<img class="portfolio-image" style="width: 16%;" src="PortfolioResources/4web/ba4.jpg" onclick="window.open(this.src);"></img>
+					<p>The project was concluded in around 5 months.</p>
+					<p>The songs composed for the game may be found on my <a style="color: #008888;" target="_blank" href="https://lunarblank.bandcamp.com/album/bau-slider">bandcamp account</a>.</p>
+
+					</div>	
+			</div>
+		</div>
+		
+		<div id="menuContainerL" style="position: fixed; top: 0%; left: 0%; width: 22%; height: 100%;">
+			<div id="MenuL" class="img-pixelated slide-in" style="position: fixed; top: 0%; left: 0%; width: 22%; box-sizing: border-box; display:block;">
+				<!--SVG border -->
+				<div style="position: relative; height: 7%;"></div>
+				
+				
+				
+				<div style="margin: auto;">
+				<img src="PortfolioResources/4web/profile.jpg" style="position: relative; border-radius: 100%; border: 8px solid white; width: 44%; height: auto; display: block; margin: auto;"></img>
+				</div>
+				
+				<div class="main-text" style="position: relative; left: 6%; width: 88%; box-sizing: border-box; text-align:center;"><h2 style="margin: 2%;">Diogo Slepetys</h2>
+				
+				<div class="table" style="height: 4%;">
+					<ul class="facebook-button-mob" style="padding: 0; margin: 2%;">
+						<li><a href="https://www.facebook.com/diogo.slepetys"><i class="fa fa-facebook"></i></a>
+						</li>
+						<li><a href="https://github.com/DiogoSlepetys/"><i class="fa fa-github"></i></a>
+						</li>
+						<li><a href="https://lunarblank.bandcamp.com/"><i class="fa fa-bandcamp"></i></a>
+						</li>
+					</ul>
+				</div>
+				
+				
+				<div class="main-text" style="position: relative; left: 6%; width: 88%; box-sizing: border-box;"><h2 style="margin: 2%;">Hello!</h2><p style="color: #cccccc;">I'm a freelance programmer and a game making enthusiast!<br><br>Feel free to contact me!<br><br></p></div>
+				
+				<div style="display: block; background-color: black; border-radius:10px;">
+				<div class="main-text" style="position: relative; left: 6%; width: 88%; box-sizing: border-box; "><img src="PortfolioResources/star.png" class="star-img"></img><h2 style="margin: 2% 8% 1% 8%; display:inline-block;"><a onclick="loadContainer(1)">&nbsp Portfolio &nbsp</a></h2><img src="PortfolioResources/star.png" class="star-img"></img></div>
+				<div class="main-text" style="position: relative; left: 6%; width: 88%; box-sizing: border-box; "><img src="PortfolioResources/star.png" class="star-img"></img><h2 style="margin: 2% 12% 1% 12%; display:inline-block;"><a onclick="loadContainer(2)">&nbsp Contact &nbsp</a></h2><img src="PortfolioResources/star.png" class="star-img"></img></div>
+				<div class="main-text" style="position: relative; left: 6%; width: 88%; box-sizing: border-box; "><img src="PortfolioResources/star.png" class="star-img"></img><h2 style="margin: 2% 18% 1% 18%; display:inline-block;"><a onclick="loadContainer(3)">&nbsp Bio &nbsp</a></h2><img src="PortfolioResources/star.png" class="star-img"></img></div>
+				</div>
+				
+				
+				</div>
+				<div class="main-text" style="position: absolute; top:90%; left: 10%; width: 80%; color: white;"><p style="color: white; text-align: center;">Brazil 2019</p></div>
+			</div>
+			
+		</div>
+
+		
+		<div id="frame" style="position: fixed; background-color: #eeeeee; display: block; width: 100%; height: 100%; z-index: -1;">
+		</div>
+		
+		<!--
+		<div id="bsu" style="position: relative; background-color: black; display: block; width: 100%; height: 1000px; z-index: -1">
+		
+			 
+			<section id="portfolio" class="bg-light-gray">
+				<div class="container">
+					<div style="position: absolute; height: 20%; width: 50%; left: 24%; top: 20%; display: block; background-color: green">
+						<img src="star.png"></img>
+					</div>
+					<div class="row text-center">
+						<div> <p class="text-muted" style="padding-top: 4%;">Looking for other good games?</p> </div>
+					</div>
+				</div>
+			</section>
+		
+		</div>-->
+		
+	<!--ThreeJS library-->
+		<script src="PortfolioResources/build/three.js"></script>
+		
+		<script src="PortfolioResources/LunarGlow.js"></script>
+		
+	<!--JQuery-->
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	
+
+	<script>
+	
+		var isMob = false;
+		
+		if( navigator.userAgent.match(/Android/i)
+		 || navigator.userAgent.match(/webOS/i)
+		 || navigator.userAgent.match(/iPhone/i)
+		 || navigator.userAgent.match(/iPad/i)
+		 || navigator.userAgent.match(/iPod/i)
+		 || navigator.userAgent.match(/BlackBerry/i)
+		 || navigator.userAgent.match(/Windows Phone/i)
+		 ){
+			isMob = true;
+			
+			//dynamic styling for mobile
+			var list = document.querySelectorAll(".main-text");
+			for(var i =0; i < list.length; i++){
+				list[i].style.fontSize = "3.4vw";
+			}
+			
+			var list2 = document.querySelectorAll(".portfolio-image");
+			for(var i =0; i < list2.length; i++){
+				list2[i].style.width = "85%";
+			}
+			
+			var list3 = document.querySelectorAll(".closex");
+			for(var i =0; i < list3.length; i++){
+				list3[i].style.right = "5%";
+			}
+			
+			var list4 = document.querySelectorAll("#scrollDiv");
+			for(var i =0; i < list4.length; i++){
+				list4[i].style.marginTop = "25%";
+			}
+			
+			document.querySelector("#menuContainerL").style.width = "75%";
+			document.querySelector("#MenuL").style.width = "75%";
+
+					
+		}
+		else{
+			
+			
+		}
+		console.log("is MOB:" + isMob);
+
+		var animIn = "slide-in 1s forwards"; 
+		var animOut = "slide-out 1s forwards";	
+		
+		if(isMob){
+			animIn = "slide-in-mob 1s forwards"; 
+			animOut = "slide-out-mob 1s forwards";
+		}
+		
+			
+		var folioOpen = 4;
+	
+		function openFolio(num){
+			if(num == 1){
+				document.querySelector("#light-devi").style.visibility = "visible";
+				document.querySelector("#light-devi").style.opacity = 1;
+			}
+			if(num == -1){
+				document.querySelector("#light-devi").style.opacity = 0;
+				document.querySelector("#light-devi").style.visibility = "hidden";	
+			}
+			if(num == 2){
+				document.querySelector("#light-sl").style.visibility = "visible";
+				document.querySelector("#light-sl").style.opacity = 1;
+			}
+			if(num == -2){
+				document.querySelector("#light-sl").style.opacity = 0;
+				document.querySelector("#light-sl").style.visibility = "hidden";	
+			}
+			if(num == 3){
+				document.querySelector("#light-om").style.visibility = "visible";
+				document.querySelector("#light-om").style.opacity = 1;
+			}
+			if(num == -3){
+				document.querySelector("#light-om").style.opacity = 0;
+				document.querySelector("#light-om").style.visibility = "hidden";	
+			}
+			if(num == 4){
+				document.querySelector("#light-eureka").style.visibility = "visible";
+				document.querySelector("#light-eureka").style.opacity = 1;
+			}
+			if(num == -4){
+				document.querySelector("#light-eureka").style.opacity = 0;
+				document.querySelector("#light-eureka").style.visibility = "hidden";	
+			}
+			if(num == 5){
+				document.querySelector("#light-pixel").style.visibility = "visible";
+				document.querySelector("#light-pixel").style.opacity = 1;
+			}
+			if(num == -5){
+				document.querySelector("#light-pixel").style.opacity = 0;
+				document.querySelector("#light-pixel").style.visibility = "hidden";	
+			}
+			if(num == 6){
+				document.querySelector("#light-bau").style.visibility = "visible";
+				document.querySelector("#light-bau").style.opacity = 1;
+			}
+			if(num == -6){
+				document.querySelector("#light-bau").style.opacity = 0;
+				document.querySelector("#light-bau").style.visibility = "hidden";	
+			}
+		}
+		
+		function loadContainer(num){
+			
+			if(num == 1){
+				document.querySelector("#totalContainerPortfolio").style.animation = animIn; 
+				if(folioOpen == 2){document.querySelector("#totalContainerContact").style.animation = animOut;}
+				if(folioOpen == 3){document.querySelector("#totalContainerBio").style.animation = animOut;}
+				folioOpen = 1;
+			}
+			if(num == 2){
+				document.querySelector("#totalContainerContact").style.animation = animIn;
+				if(folioOpen == 1){document.querySelector("#totalContainerPortfolio").style.animation = animOut;}
+				if(folioOpen == 3){document.querySelector("#totalContainerBio").style.animation = animOut;}
+				folioOpen = 2;
+			}
+			if(num == 3){
+				document.querySelector("#totalContainerBio").style.animation = animIn;
+				if(folioOpen == 2){document.querySelector("#totalContainerContact").style.animation = animOut;}
+				if(folioOpen == 1){document.querySelector("#totalContainerPortfolio").style.animation = animOut;}
+				folioOpen = 3;
+			}
+			
+			if(num == 0){
+				if(folioOpen == 1){
+					document.querySelector("#totalContainerPortfolio").style.animation = animOut; 
+				}
+				if(folioOpen == 2){
+					document.querySelector("#totalContainerContact").style.animation = animOut; 
+				}
+				if(folioOpen == 3){
+					document.querySelector("#totalContainerBio").style.animation = animOut;
+				}
+				folioOpen = 0;
+			}
+
+		}
+		
+		var dep = -350.0;
+		var dep2 = -350.0;
+		var sinPlus = 0;
+		var leavesGeometry;
+		var composer;
+		var meshe, meshep, mesheh, mring, boxc, mlid;
+		var poX = window.innerWidth/2;
+		var poY = window.innerHeight/2;
+		var lights = new Float32Array( 3 );
+		var tex, reflectionCube;
+		var d = new Date();
+		var count = 0;
+		var group = new THREE.Group();
+		
+		init();
+		initLights();
+		
+		function init()
+		{
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+			camera.position.z = 0;
+			camera.position.y = 0;
+			camera.rotation.x = 0;
+
+			scene = new THREE.Scene();
+			
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+			boxc = new THREE.Mesh( geometry, material );
+			
+			//luna
+			new THREE.ObjectLoader().load( 'PortfolioResources/lunarModel.js', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				tex = new THREE.TextureLoader().load( 'PortfolioResources/4web/clock2.jpg' );
+				//var reflectionCube = new THREE.CubeTextureLoader().load( ["profile.png","profile.png","profile.png","profile.png","profile.png","profile.png"]);
+				reflectionCube = new THREE.CubeTextureLoader().load( ["PortfolioResources/4web/blank2.jpg","PortfolioResources/4web/blank2.jpg","PortfolioResources/4web/blank2.jpg","PortfolioResources/4web/blank2.jpg","PortfolioResources/4web/eyecansee.jpg","PortfolioResources/4web/blank.jpg"]);
+				reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex, shininess: 100, reflectivity: 0.7});
+				material.envMap = reflectionCube;
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				meshe = new THREE.Mesh(o.geometry, material);
+				meshe.scale.x = meshe.scale.y = meshe.scale.z = 60;
+				//meshe.position.y -= 70;
+				//meshe.position.x += 50;
+				//meshe.position.z -= 220;
+				meshe.rotation.x += Math.PI/2;
+				meshe.rotation.y -= Math.PI;
+				meshe.receiveShadow = true;
+				group.add( meshe );
+				meshe.eulerOrder = 'XZY';
+
+				} );
+			} );
+			/*
+			new THREE.ObjectLoader().load( 'PortfolioResources/clocklid.json', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				var tex2 = new THREE.TextureLoader().load( 'PortfolioResources/col.png' );
+				var tex3 = new THREE.TextureLoader().load( 'PortfolioResources/lidMap.png' );
+				var reflectionCube = new THREE.CubeTextureLoader().load( ["PortfolioResources/blank2.png","PortfolioResources/blank2.png","PortfolioResources/blank2.png","PortfolioResources/blank2.png","PortfolioResources/eyecansee.png","PortfolioResources/eyecansee.png"]);
+				//reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex2, shininess: 60, reflectivity: 0.5});
+				material.envMap = reflectionCube;
+				material.normalMap = tex3;
+				//material.normalScale = new THREE.Vector2(0.0,0.0);
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				mlid = new THREE.Mesh(o.geometry, material);
+				mlid.scale.x = mlid.scale.y = mlid.scale.z = 60;
+				//mring.position.x += 50;
+				mlid.position.z -= 3;
+				mlid.position.y -= 72;
+				mlid.rotation.x = Math.PI;
+				mlid.rotation.y -= Math.PI;
+				mlid.eulerOrder = 'XZY';
+				mlid.castShadow = true;
+
+				group.add(mlid);
+				
+				} );
+			} );*/
+			
+			new THREE.ObjectLoader().load( 'PortfolioResources/detailRing.json', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				var tex2 = new THREE.TextureLoader().load( 'PortfolioResources/4web/col.jpg' );
+				//var tex3 = new THREE.TextureLoader().load( 'PortfolioResources/normalDetails.png' );
+				//var reflectionCube = new THREE.CubeTextureLoader().load( ["blank2.png","blank2.png","blank2.png","blank2.png","eyecansee.png","blank.png"]);
+				//reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex2, shininess: 60, reflectivity: 0.5});
+				material.envMap = reflectionCube;
+				//material.normalMap = tex3;
+				//material.normalScale = new THREE.Vector2(0.1,0.1);
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				mring = new THREE.Mesh(o.geometry, material);
+				mring.scale.x = mring.scale.y = mring.scale.z = 60;
+				//mring.position.x += 50;
+				mring.position.z -= 5;
+				mring.position.y += 1;
+				mring.rotation.x += Math.PI/2;
+				mring.rotation.y -= Math.PI;
+				mring.eulerOrder = 'XZY';
+				mring.castShadow = true;
+
+				group.add(mring);
+				
+				} );
+			} );
+			
+			
+			new THREE.ObjectLoader().load( 'PortfolioResources/minutesPointer.json', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				var tex2 = new THREE.TextureLoader().load( 'PortfolioResources/4web/coldark.jpg' );
+				//var reflectionCube = new THREE.CubeTextureLoader().load( ["blank2.png","blank2.png","blank2.png","blank2.png","eyecansee.png","blank.png"]);
+				//reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex2, shininess: 100, reflectivity: 0.9});
+				material.envMap = reflectionCube;
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				meshep = new THREE.Mesh(o.geometry, material);
+				meshep.scale.x = meshep.scale.y = meshep.scale.z = 26;
+				//meshep.position.x += 50;
+				//meshep.position.z -= 220;
+				meshep.rotation.x += Math.PI/2;
+				meshep.rotation.y -= Math.PI;
+				meshep.eulerOrder = 'XZY';
+				meshep.castShadow = true;
+				group.add( meshep );
+				} );
+			} );
+			
+			new THREE.ObjectLoader().load( 'PortfolioResources/lunarModel3.js', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				var tex2 = new THREE.TextureLoader().load( 'PortfolioResources/Lunar3Dtex.jpg' );
+				//var reflectionCube = new THREE.CubeTextureLoader().load( ["blank2.png","blank2.png","blank2.png","blank2.png","eyecansee.png","blank.png"]);
+				//reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex2, shininess: 100, reflectivity: 0.9});
+				material.envMap = reflectionCube;
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				var meshl = new THREE.Mesh(o.geometry, material);
+				meshl .scale.x = meshl .scale.y = meshl .scale.z =22;
+				//meshep.position.x += 50;
+				//meshep.position.z -= 220;
+				//meshl.rotation.z = Math.PI/2;
+				meshl.rotation.y = Math.PI;
+				meshl.rotation.x = Math.PI/2;
+				meshl.position.x -= 3;
+				meshl.position.y += 100;
+				meshl.position.z -= 4;
+				meshl.eulerOrder = 'XZY';
+				meshl.castShadow = true;
+				group.add( meshl  );
+				} );
+			} );
+			
+			new THREE.ObjectLoader().load( 'PortfolioResources/hourPointer.json', function ( object ) {
+				object.traverse( function ( o ) {
+				if ( o.type == "Mesh" && o.material && ! o.material.transparent ) {
+				o.material.side = THREE.DoubleSide;
+				}
+				var tex2 = new THREE.TextureLoader().load( 'PortfolioResources/4web/coldark.jpg' );
+				//var reflectionCube = new THREE.CubeTextureLoader().load( ["blank2.png","blank2.png","blank2.png","blank2.png","eyecansee.png","blank.png"]);
+				//reflectionCube.format = THREE.RGBFormat;
+
+				var material = new THREE.MeshPhongMaterial({
+				 map: tex2, shininess: 100, reflectivity: 0.9});
+				material.envMap = reflectionCube;
+				var glowMat = new OutGlowMaterial( new THREE.Color(0x00ffff));
+				mesheh = new THREE.Mesh(o.geometry, material);
+				mesheh.scale.x = mesheh.scale.y = mesheh.scale.z = 22;
+				//mesheh.position.x += 50;
+				//mesheh.position.z -= 218;
+				mesheh.rotation.x += Math.PI/2;
+				mesheh.rotation.y -= Math.PI;
+				mesheh.eulerOrder = 'XZY';
+				mesheh.castShadow = true;
+				group.add( mesheh );
+				
+				//group.applyMatrix( new THREE.Matrix4().makeTranslation( -10,0,-20 ) );
+				boxc.position.z = -218;
+				
+				boxc.add(group);
+				scene.add(boxc);
+				//scene.add( group );
+				animate();
+				} );
+			} );
+				
+			
+			//scene suspension particles///////////
+			
+			var quantPar = 2000;
+			
+			var floatyGeometry = new THREE.BufferGeometry();
+			
+			var starsMaterial = new THREE.PointsMaterial( { transparent: true, opacity: 0.8, depthWrite: false, color: 0xddddff } )
+			starsMaterial.size = 1.0;
+			if(isMob){ quantPar = 500; starsMaterial.size = 2.0;}
+			var positions = new Float32Array( quantPar * 3 );
+			
+			for ( var i = 0, i3 = 0; i < quantPar; i ++, i3 += 3 ) {
+			
+				positions[ i3 + 0 ] = Math.random()* 800 - 400;
+				positions[ i3 + 1 ] = Math.random()* 400 - 200;
+				positions[ i3 + 2 ] = Math.random()* -400 -200;
+			}
+			
+			//adds attributes to our shader uniforms
+			floatyGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+			
+			pFloatySystem = new THREE.Points( floatyGeometry, starsMaterial );
+			scene.add( pFloatySystem );
+			//end scene suspension particles///////////////
+			
+			//stars particles///////////////
+				
+			var leavesCount = 200;
+			var plSiz = 0;
+			var dival = 1;
+			if(isMob){leavesCount = 80; plSiz = 40; dival = 2;}
+			myLeavesMat = new ParticleMaterial('PortfolioResources/star.png');
+
+			leavesGeometry = new THREE.BufferGeometry();
+			
+			var positions = new Float32Array( leavesCount * 3 );
+			var sizes = new Float32Array( leavesCount );
+			
+			for ( var i = 0, i3 = 0; i < leavesCount; i ++, i3 += 3 ) {
+			
+				positions[ i3 + 0 ] = (Math.random()* 800 - 400)/dival;
+				positions[ i3 + 1 ] = (Math.random()* 400 - 200);
+				positions[ i3 + 2 ] = -350 + Math.random()* 100;
+				
+				sizes[ i ] = Math.abs(positions[i3]*0.06) + 10 + plSiz + (Math.random()*20);
+			}
+			
+			//adds attributes to our shader uniforms
+			leavesGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+			leavesGeometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
+			
+			var leavesSystem = new THREE.Points( leavesGeometry, myLeavesMat );
+			scene.add( leavesSystem );
+			
+			//end stars///////////////
+			
+			
+			//text lunarBlank
+			//var plane = new THREE.PlaneBufferGeometry( 125, 45 );
+				
+			//var planeTex = new THREE.TextureLoader().load( 'text.png' );
+			//planeTex.magFilter = THREE.NearestFilter;
+			//planeTex.minFilter = THREE.LinearMipMapLinearFilter;
+			
+			//var planeMat = new THREE.MeshBasicMaterial( { map: planeTex, transparent: false, opacity: 1, depthWrite: true, depthTest: true, alphaTest: 0.4 } );
+			//lunMesh = new THREE.Mesh( plane, planeMat );
+			//scene.add( lunMesh );
+			
+			//lunMesh.position.x = 0;
+			//lunMesh.position.y = -50;
+			//lunMesh.position.z = -150;
+			
+			renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor(0x010508);//0x010508
+			renderer.sortObjects = true;
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMapCullFace = THREE.CullFaceBack;
+			
+			document.getElementById("frame").appendChild( renderer.domElement );
+			//document.body.appendChild( renderer.domElement );
+			
+			window.addEventListener( 'resize', onWindowResize, false );
+			
+		}
+		
+		function initLights() {
+		
+			var globalLight = new THREE.AmbientLight(0xffffff, 0.6);
+			scene.add(globalLight);
+			
+			fLight = new THREE.PointLight( 0xffffff, 3, 500, 2 );
+			fLight.position.set( -20, 70, -80 );
+			fLight.castShadow = true;
+			scene.add( fLight )
+			
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+		}
+		
+		
+		function animate() {
+		
+			requestAnimationFrame( animate );
+
+			d = new Date();
+			
+			var hour = d.getHours();
+			var mins = d.getMinutes();
+			
+			document.onmousemove = function(event) {
+				poY = event.clientY;
+				poX = event.clientX;
+			}
+			
+			document.onmouseout = function(event) {
+				poY = window.innerHeight/2;
+				poX = window.innerWidth/2;
+			}
+			
+			dep += 3.0 * Math.sin(sinPlus);
+			dep2 += 3.0 * Math.sin(sinPlus/2);
+			sinPlus += 0.08;
+			
+			
+			boxc.rotation.y = (poX - window.innerWidth/2)*0.0014;
+			 //= (poX - window.innerWidth/2)*-0.0014;
+			// = (poX - window.innerWidth/2)*-0.0014;
+			//lunMesh.rotation.y = (poX - window.innerWidth/2)*0.001; 
+			
+			boxc.position.y = (dep2/20) - 10;
+			//meshep.position.y = (dep2/20) + 10;
+			//mesheh.position.y = (dep2/20) + 10;
+			
+			boxc.position.x = 50;
+			//boxc.rotation.x = 0.2;
+			
+			//boxc.position.z = -300;
+			
+			
+			meshep.rotation.y = - mins*(2*Math.PI/60);
+			
+			if(hour > 12){hour -= 12;} 
+			
+			mesheh.rotation.y = - (hour)*((2*Math.PI)/12); 
+			
+			//lunMesh.position.y = meshe.position.y - 80;
+			
+			myLeavesMat.uniforms.sun.value = 0.05;
+			myLeavesMat.uniforms.sun.needsUpdate = true;
+			
+			
+			
+			lights[0] = 1.2*(poX - window.innerWidth/2);
+			lights[1] = poY + window.innerHeight/2;
+			lights[2] = dep;
+			myLeavesMat.uniforms.light.value = lights;
+
+			myLeavesMat.uniforms.light.needsUpdate = true;
+			
+
+			
+			camera.position.x = poX*0.1 - window.innerWidth/20;
+			camera.position.y = poY*-0.1 + window.innerHeight/20;
+			
+			renderer.render( scene, camera );
+		}
+	
+	</script>
+
+	</body>
+	
+</html>

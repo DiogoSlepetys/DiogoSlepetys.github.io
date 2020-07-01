@@ -1,0 +1,22 @@
+.myButton {
+	margin:0;
+	padding:0;
+	position: absolute;
+	z-index: 30;
+	border-radius: 5px;
+	text-align:center;
+	background-color: white;
+	transition-duration: 0.4s;
+}
+.myButton:hover{
+	cursor: pointer;
+	box-shadow: 0px 0px 8px 2px rgba(255,244,188,0.66);
+	background-color: rgb(255,244,188);
+}
+.myButton:active{
+	background-color:rgb(150,150,150);
+}
+.myButton:focus{
+	background-color:rgb(255,230,108);
+	outline:0;
+}
