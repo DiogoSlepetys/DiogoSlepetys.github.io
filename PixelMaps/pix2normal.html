@@ -1,0 +1,2781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Pix Tool">
+    <meta name="author" content="Diogo Slepetys">
+	
+	<link rel="icon" type="image/png" href="favicon.gif"/>
+	
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+	
+	<!-- three js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.js"></script>
+	
+	<style>
+	h4{ font-family: arial; color: #eee; }
+	h1{ color: #eee; font-size: 2em; }
+	h3{ text-align: center; color: #ccc; font-size: 0.8em; margin-top: 0.3vh; margin-bottom: 0.3vh;}
+	h5{ text-align: center; color: #ccc; font-size: 0.8em; margin-top: 1vh; margin-bottom: 0.5vh;}
+	.less-mtop{
+		margin-top: 0.1vw;
+		font-size: calc(0.2em + 0.5vw);
+		display: block;
+		background-color: #333;
+		transform: translateY(-0.7vh);
+	}
+	
+	.albedo { grid-area: albedo; position: relative; }
+	.tiling { grid-area: tiling; position: relative; }
+	.emission { grid-area: emission; position: relative; }
+	.normal { grid-area: normal; position: relative; }
+	.roughness { grid-area: roughness; position: relative; }
+	.metalness { grid-area: metalness; position: relative; }
+	.aomap { grid-area: aomap; position: relative; }
+	.rme { grid-area: rme; position: relative; }
+	.renderer { grid-area: renderer; position: relative; }
+	
+	.grid-container {
+		position: relative;
+	    display: grid;
+	    grid-template-areas:
+		  'albedo albedo albedo albedo tiling tiling tiling tiling renderer renderer renderer renderer'
+		  'normal normal normal normal aomap aomap aomap aomap renderer renderer renderer renderer'
+		  'roughness roughness roughness metalness metalness metalness emission emission emission rme rme rme';
+	    grid-gap: 2px;
+	    background-color: #1076a4;
+	}
+	.grid-container > div {
+		height: 31.25vh;
+		background-color: #333;
+	}
+	
+	.double-cell {
+	    display: flex;  
+		margin: 1.5vw;
+	}
+	
+	.double-cell > div {
+		width: 45%;
+		margin: 1vh;
+	}
+	.double-cell > div:nth-child(2) {
+		width: 54%;
+	}
+	
+	[type="file"] {
+		display: block;
+	    border: 0;
+	    clip: rect(0, 0, 0, 0);
+	    height: 1px;
+	    overflow: hidden;
+	    padding: 0;
+	    position: absolute !important;
+	    white-space: nowrap;
+	    width: 1px;
+	}
+	
+	[type="file"] + label {
+		margin: auto;
+	    display: block;
+		width: 7.5vw;
+		height: 3vh;
+		border-radius: 6px 6px 0px 0px;
+		background-color: #ccc;
+		text-align: center;
+		cursor: pointer;
+		font-size: calc(0.4em + 0.3vw);
+		border-bottom: 2px solid #1076a4; 
+	}
+	[type="file"]:hover  + label {
+		background-color: #666;
+		color: white;
+	}
+	
+	input[type=range]{
+		margin-top: 0;
+		margin-bottom: 0;
+		padding: 0;
+		height: 0.5vh;
+	}
+	input[type=range] + label{
+		font-size: calc(0.35em + 0.35vw);
+	}
+	
+	input[type=range]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		background: black;
+		border: 2px solid white;
+		border-radius: 50%;
+		height: 0.6vw;
+		width: 0.6vw;
+		display: block;
+	}
+	input[type=radio]{
+		margin: 0;
+	}
+	
+	fieldset{
+		margin: 0; padding: 0;
+		padding-left: 1vw;
+	}
+	
+	label{
+		font-size: calc(0.3em + 0.23vw + 0.23vh);
+		line-height: 200%;
+	}
+	
+	fieldset{
+		border: 2px solid grey ;
+		border-style: dashed;
+		padding-right: 1vw;
+		padding-left: 1vw;
+	}
+	
+	button{
+		margin: auto;
+	    display: block;
+		width: 7.5vw;
+		min-height: 2vh;
+		border: none;
+		border-top: 2px solid #1076a4;
+		font-size: calc(0.3em + 0.3vw + 0.2vh);
+		background-color: #ccc;
+		cursor: pointer;
+	}
+	button:hover{
+		background-color: #666;
+		color: white;
+	}
+	
+	.tileup{
+		margin: auto;
+	    display: block;
+		width: 7.5vw;
+		height: 3vh;
+		border-radius: 6px 6px 0px 0px;
+		background-color: #ccc;
+		text-align: center;
+		line-height: 150%;
+		cursor: pointer;
+	}
+	.tileup:hover{
+		background-color: #666;
+		color: white;
+	}
+	.tileside{
+		margin: 0;
+	    display: block;
+		width: 3vh;
+		height: 7.5vw;
+		border-radius: 6px 0px 0px 6px;
+		background-color: #ccc;
+		text-align: center;
+		line-height: 7.5vw;
+		cursor: pointer;
+	}
+	.tileside:hover{
+		background-color: #666;
+		color: white;
+	}
+	.t-right{
+		border-radius: 0px 6px 6px 0px;
+	}
+	.t-down{
+		border-radius: 0px 0px 6px 6px;
+		line-height: 150%;
+	}
+	.helpico{
+		position: absolute; 
+		width: 1vw; 
+		height: 1vw; 
+		display: block; 
+		background-color: #444; 
+		text-align: center; 
+		border-radius: 50%; 
+		line-height: 98%; 
+		font-size: 0.8vw;
+		right: 1%;
+		color: rgba(0,0,0,0.25);
+		bottom: 2%;
+	}
+	.helpico:hover{
+		color: rgba(0,0,0,1);
+		cursor: pointer;
+	}
+	.numico{
+		width: 2vw;
+		height: 2vw;
+		color: #bbb;
+		line-height: 250%;
+		border-radius: 0% 50% 50% 0; 
+		top: 0%; left: 0%;
+	}
+	#help{
+		transition: opacity 0.3s;
+	}
+	.side-text{
+		font-size: calc(0.4em + 0.35vw);
+		font-family: 'Press Start 2P', cursive;
+	}
+	
+	.checkerBG{
+		background-image: linear-gradient(0deg, #444 25%, transparent 25%), linear-gradient(-90deg, #444 25%, transparent 25%), linear-gradient(0deg, transparent 75%, #444 75%), linear-gradient(-90deg, transparent 75%, #444 75%); background-size: 0.47vw 0.47vw;
+	}
+	
+	canvas{
+		image-rendering: pixelated;
+		image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-crisp-edges;
+	}
+	
+	input{
+		background-color: #222;
+		color: #999;
+		border-radius: 5px;
+		margin-left: 1vh;
+	}
+	
+	::-webkit-scrollbar{
+		width: 9px;
+		height: 9px;
+	}
+	::-webkit-scrollbar-thumb{
+		background: #9C9C9C;
+		border-radius: 0px;
+	}
+	::-webkit-scrollbar-thumb:hover{
+		background: #2A9BD4;
+	}
+	::-webkit-scrollbar-track{
+		background: #000000;
+		border-radius: 0px;
+		box-shadow: inset 0px 0px 0px 0px #F0F0F0;
+	}
+	
+	
+	</style>
+	
+    <title>Pixel Maps</title>
+	
+</head>
+
+<body id="page-top" style="margin: 0; overflow-y: scroll; background-color: #000509; font-family: 'Press Start 2P', cursive; user-select: none;" >
+	
+	<!--sidebar {-->
+	<div style="position: fixed; width: 15vw; height: 100vh; left: 0; top: 0; display: block; background-color: #000;">
+		
+		<ul style="padding: 0; margin: 0;">
+			
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><h1 style="text-align:center; margin: 1vw;">Pixel Maps</h1></li>
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><div id="tileBtn" onclick="showGallery(false)" style="display: block; width: 98%; height: 4vh; float: right; background-color: #2196F3; border-radius: 20px 0px 0px 20px; text-align: center; cursor: pointer;"><br>Single Tile</div></li>
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><div style="display: block; width: 98%; height: 4vh; float: right; background-color: #333; border-radius: 20px 0px 0px 20px; text-align: center;"><br>Tileset (TBD)</div></li>
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><div id="galleryBtn" onclick="showGallery(true)" style="display: block; width: 98%; height: 4vh; float: right; background-color: #333; border-radius: 20px 0px 0px 20px; text-align: center; cursor: pointer;"><br>Gallery</div></li>
+			<li><div style="height: 5vh; display: block;"></div></li>
+			<li><h3>Like this tool?</h3></li>
+			<li><div style="height: 2vh; display: block;"></div></li>
+			<li><a href='https://ko-fi.com/K3K244QH8' target='_blank'><img height='36' style='border:0px;height:36px; display: block; margin: 0 auto;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a></li>
+			
+			<li><div style="height: 6vh; display: block;"></div></li>
+			<li><h3 style="font-size: 1.3vw;">Also...</h3></li>
+			<li><div style="height: 6vh; display: block;"></div></li>
+			<li><h3>Check those guys out:</h3></li>
+			<li><a style="color:#2196F3; font-size: calc(0.4vw + 6px); display:block; margin: 3vh 0 0 0; text-align:center" href="https://jeiel.itch.io/sprytile">Sprytile <br><br> 3D Tilemaps</a></li>
+			<li><a style="color:#2196F3; font-size: calc(0.4vw + 6px); display:block; margin: 3vh 0 0 0; text-align:center" href="https://threejs.org/">Three.js <br><br> 3D Js Library</a></li>
+			
+			<li><div style="height: 22vh; display: block;"></div></li>
+			<li><h3>Brazil - 2021</h3></li>
+			
+		</ul>
+		
+	</div>
+	<!--sidebar end }-->
+		
+	<!-- help floater -->
+	<div id="help" style="position: fixed; width: 22vw; left: 0; top: 0; height: 100vh; display: block; background-color: #888; z-index: 15; padding: 4vw 4vw 4vw 4vw; visibility: hidden; opacity: 0;">
+		<p style="font-size: calc(0.8em + 0.4vw);">help</p><br>
+		<p style="font-size: calc(0.6em + 0.4vw); color: #444; font-family: arial; font-weight: bold;" >helptext</p>
+	</div>
+	
+	<!--gallery-->
+	<div id="galleryOverlay" style="position: fixed; width: 84vw; height: 100vh; right: 0; top: 0; display: block; background-color: #222; z-index: 2; visibility: hidden;">
+		<p style="margin: 1vh; color: #fff; width: 100%; text-align: center">Gallery</p>
+		
+			<div style="position: relative; width: 100%; margin: auto; display: flex; max-height: 95%; flex-wrap: wrap; overflow-y: scroll;">
+				<img style="margin: auto; flex: 2 3 20%;" src="metalgrate.png"></img>
+				<img style="margin: auto; flex: 2 3 20%;" src="metalgrate2.png"></img>
+				<img style="margin: auto; flex: 2 3 20%;" src="BrownBricks.png"></img>
+				<img style="margin: auto; flex: 2 3 20%;" src="Aztec.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+				<img style="margin: auto; flex: 1 0 21%;" src="favicon.png"></img>
+			</div>
+
+	</div>
+		 
+	<!--main area-->
+	<div style="position: fixed; width: 84vw; height: 100vh; right: 0; top: 0; display: block; background-color: #222;">
+		
+		<div style="height: 3vh; width: 100%; text-align: center; color: #ccc;"><marquee id="marqueeTop" style="margin-top: 0.6vh;">A pixel-art specialized tool for generating next-gen maps!</marquee></div>
+		
+		<!--floater pane for height from texture {-->
+		<div id="heightfromtex-box" style="position: absolute; margin-left: 14vw; margin-top: 4vw; width: 42vw; height: 80vh; border-radius: 10px; background-color: white; display: inline-block; z-index: 10; box-shadow: 0px 0px 45px 0.9vw rgba(0,0,0,1); background-color: #444; overflow-y: auto; visibility: hidden; " >
+			<div style="display: block; border-radius: 50%; background-color: #a22; position: absolute; right: 1vw; top: 1vw; width: 1vw; height: 1vw; cursor: pointer;" onclick="closebox()"></div>
+			<h5>Height Map from Texture</h5>
+			<div class="double-cell">
+				<canvas id="canvas1pre" style="position: relative; background-color: #bbbbff; width: 12vw; height: 12vw; image-rendering: pixelated; margin:auto; display: block; cursor: crosshair;"></canvas>
+				<div style="width: 6vw; height: 6vw; text-align: center; font-size: 3vw;"><div id="liteArrow" style="margin: 1vw;">🌗</div></div>
+				<canvas id="canvas2pre" style="position: relative; background-color: #bbbbff; width: 12vw; height: 12vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+			</div>
+			<fieldset id="hfromtexradio" style="margin:auto; display: block; text-align: center; width: 80%">
+			    <h3>Base Params</h3><br>
+				<input type="checkbox" id="hminvertcol" name="tile" oninput="updateInvertOpt(0,this.checked)">
+				<label for="hminvertcol">Invert</label><br>
+			</fieldset>
+			
+			<fieldset id="layerset" style="margin:auto; display: block; text-align: center; width: 80%">
+			    <h3>Light Direction Blur</h3><br>
+				<input type="range" id="lightThreshold" value="255" min="0" max="255" step="1" style="direction: rtl" oninput="updateDirectionThreshold(this.value); this.nextElementSibling.value = this.value;">
+				<input id="lightThresholdNum" oninput="this.previousElementSibling.value = this.value; updateDirectionThreshold(this.value);" style="width: 15%;"/>
+				<label for="lightThreshold">Threshold</label><br>
+				<input type="range" id="layerIntensity" value="2" min="0" max="5" step="0.05" oninput="updateDirectionBlur(this.value); this.nextElementSibling.value = this.value;">
+				<input id="layerIntensityNum" oninput="this.previousElementSibling.value = this.value; updateDirectionBlur(this.value);" style="width: 15%;"/>
+				<label for="layerIntensity">Intensity</label><br>
+			</fieldset>
+			
+			<fieldset id="heightcurves" style="margin:auto; display: block; text-align: center; width: 80%">
+			    <h3>Curves</h3><br>
+				<input type="range" id="curvePivot" value="20" min="0" max="255" oninput="updateCurvePivot(0,this.value); this.nextElementSibling.value = this.value;">
+				<input id="curvePivotNum" oninput="this.previousElementSibling.value = this.value; updateCurvePivot(0,this.value);" style="width: 15%;"/>
+				<label for="curvePivot">Pivot</label><br>
+				<input type="range" id="curveIntensity" value="0" min="0" max="255" oninput="updateCurveInt(0,this.value); this.nextElementSibling.value = this.value;">
+				<input id="curveIntensityNum" oninput="this.previousElementSibling.value = this.value; updateCurveInt(0,this.value);" style="width: 15%;"/>
+				<label for="curveIntensity">Intensity</label><br>
+			</fieldset>
+				
+			<fieldset style="margin:auto; display: block; text-align: center; width: 80%">	
+				<h3>Smart Blur</h3><br>
+				
+					<fieldset id="blurRadios" style="margin:auto; display: block; text-align: center; width: 80%">
+						<input type="radio" name="sblur" id="checkerBlur" value="0" checked="checked">
+						<label for="checkerBlur">Checker</label>
+						<input type="radio" name="sblur" id="diamondBlur" value="1">
+						<label for="diamondBlur">Diamond</label>
+						<input type="radio" name="sblur" id="boxBlur" value="2">
+						<label for="boxBlur">Box</label>
+					</fieldset>
+				
+				<input id="blurintensity" type="range" value="0" min="-64" max="64" style="width: 30%;" oninput="updateBlurIntensity(0,this.value); this.nextElementSibling.value = this.value;">
+				<input id="blurintensityNum" oninput="this.previousElementSibling.value = this.value; updateBlurIntensity(0,this.value);" style="width: 15%;"/>
+				<label for="blurintensity">Threshold</label><br>
+			</fieldset>
+			
+			<br>
+			<button onclick="transferHeightImage()">GENERATE</Button>
+			<br>
+		</div><!--}-->
+		
+		<!--floater pane for roughness, metalness and emission generation from height and texture maps {-->
+		<div id="mapsfromtex-box" style="position: absolute; margin-left: 14vw; margin-top: 4vw; width: 42vw; height: 80vh; border-radius: 10px; background-color: white; display: inline-block; z-index: 10; box-shadow: 0px 0px 45px 0.9vw rgba(0,0,0,1); background-color: #444; overflow-y: auto; visibility: hidden; " >
+			<div style="display: block; border-radius: 50%; background-color: #a22; position: absolute; right: 1vw; top: 1vw; width: 1vw; height: 1vw; cursor: pointer;" onclick="closemapbox()"></div>
+			<h5 id="mapFromName">Title</h5>
+			<div class="double-cell">
+				<canvas id="canvas3pre" style="position: relative; background-color: #bbbbff; width: 12vw; height: 12vw; image-rendering: pixelated; margin:auto; display: block; cursor: crosshair;"></canvas>
+				<canvas id="canvas4pre" style="position: relative; background-color: #bbbbff; width: 12vw; height: 12vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+			</div>
+			
+			<section id="greyscaleSection" style="display: none">
+				
+				<div id="RoughnessFromHeightContainer">		
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%">
+						<h3>Base Params</h3><br>
+						<input type="checkbox" id="roughnessFromHeightInvert" name="invert" oninput="updateInvertOpt(1,this.checked)">
+						<label for="roughnessFromHeightInvert">Invert</label><br>
+					</fieldset>
+					
+					<fieldset id="heightcurves" style="margin:auto; display: block; text-align: center; width: 80%">
+						<h3>Curves</h3><br>
+						<input type="range" id="curvePivot" value="20" min="0" max="255" oninput="updateCurvePivot(1,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curvePivotNum" oninput="this.previousElementSibling.value = this.value; updateCurvePivot(1,this.value);" style="width: 15%;"/>
+						<label for="curvePivot">Pivot</label><br>
+						<input type="range" id="curveIntensity" value="0" min="0" max="255" oninput="updateCurveInt(1,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curveIntensityNum" oninput="this.previousElementSibling.value = this.value; updateCurveInt(1,this.value);" style="width: 15%;"/>
+						<label for="curveIntensity">Intensity</label><br>
+					</fieldset>
+
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%">	
+						<h3>Smart Blur</h3><br>
+						
+							<fieldset id="roughBlurRadios" style="margin:auto; display: block; text-align: center; width: 80%">
+								<input type="radio" name="rblur" id="rcheckerBlur" value="0" checked="checked">
+								<label for="rcheckerBlur">Checker</label>
+								<input type="radio" name="rblur" id="rdiamondBlur" value="1">
+								<label for="rdiamondBlur">Diamond</label>
+								<input type="radio" name="rblur" id="rboxBlur" value="2">
+								<label for="rboxBlur">Box</label>
+							</fieldset>
+						
+						<input id="blurintensity" type="range" value="0" min="-64" max="64" style="width: 30%;" oninput="updateBlurIntensity(1,this.value); this.nextElementSibling.value = this.value;">
+						<input id="blurintensityNum" oninput="this.previousElementSibling.value = this.value; updateBlurIntensity(1,this.value);" style="width: 15%;"/>
+						<label for="blurintensity">Threshold</label><br>
+					</fieldset>
+				</div>
+				
+				<div id="MetalnessFromHeightContainer">		
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%; background-color: green">
+						<h3>Base Params</h3><br>
+						<input type="checkbox" id="metalnessFromHeightInvert" name="invert" oninput="updateInvertOpt(2,this.checked)">
+						<label for="metalnessFromHeightInvert">Invert</label><br>
+					</fieldset>
+					
+					<fieldset id="heightmetalnesscurves" style="margin:auto; display: block; text-align: center; width: 80%">
+						<h3>Curves</h3><br>
+						<input type="range" id="curvePivot" value="20" min="0" max="255" oninput="updateCurvePivot(2,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curvePivotNum" oninput="this.previousElementSibling.value = this.value; updateBlurIntensity(2,this.value);" style="width: 15%;"/>
+						<label for="curvePivot">Pivot</label><br>
+						<input type="range" id="curveIntensity" value="0" min="0" max="255" oninput="updateCurveInt(2,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curvePivotNum" oninput="this.previousElementSibling.value = this.value; updateCurveInt(2,this.value);" style="width: 15%;"/>
+						<label for="curveIntensity">Intensity</label><br>
+					</fieldset>
+
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%">	
+						<h3>Smart Blur</h3><br>
+						
+							<fieldset id="blurRadiosMetalness" style="margin:auto; display: block; text-align: center; width: 80%">
+								<input type="radio" name="blurmetalness" id="checkerBlur" value="0" checked="checked">
+								<label for="checkerBlur">Checker</label>
+								<input type="radio" name="blurmetalness" id="diamondBlur" value="1">
+								<label for="diamondBlur">Diamond</label>
+								<input type="radio" name="blurmetalness" id="boxBlur" value="2">
+								<label for="boxBlur">Box</label>
+							</fieldset>
+						
+						<input id="blurintensitymetalness" type="range" value="0" min="-64" max="64" style="width: 30%;" oninput="updateBlurIntensity(2,this.value); this.nextElementSibling.value = this.value;">
+						<input id="blurintensitymetalnessNum" oninput="this.previousElementSibling.value = this.value; updateBlurIntensity(2,this.value);" style="width: 15%;"/>
+						<label for="blurintensitymetalness">Threshold</label><br>
+					</fieldset>
+				</div>
+				
+				<div id="EmissionFromHeightContainer">		
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%; background-color: pink">
+						<h3>Base Params</h3><br>
+						<input type="checkbox" id="emissionFromHeightInvert" name="invert" oninput="updateInvertOpt(3,this.checked)">
+						<label for="emissionFromHeightInvert">Invert</label><br>
+					</fieldset>
+					
+					<fieldset id="heightemissioncurves" style="margin:auto; display: block; text-align: center; width: 80%">
+						<h3>Curves</h3><br>
+						<input type="range" id="curvePivot" value="20" min="0" max="255" oninput="updateCurvePivot(3,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curvePivotNum" oninput="this.previousElementSibling.value = this.value; updateCurvePivot(3,this.value);" style="width: 15%;"/>
+						<label for="curvePivot">Pivot</label><br>
+						<input type="range" id="curveIntensity" value="0" min="0" max="255" oninput="updateCurveInt(3,this.value); this.nextElementSibling.value = this.value;">
+						<input id="curveIntensityNum" oninput="this.previousElementSibling.value = this.value; updateCurveInt(3,this.value);" style="width: 15%;"/>
+						<label for="curveIntensity">Intensity</label><br>
+					</fieldset>
+
+					<fieldset style="margin:auto; display: block; text-align: center; width: 80%">	
+						<h3>Smart Blur</h3><br>
+						
+							<fieldset id="blurRadiosEmission" style="margin:auto; display: block; text-align: center; width: 80%">
+								<input type="radio" name="bluremission" id="checkerBlur" value="0" checked="checked">
+								<label for="checkerBlur">Checker</label>
+								<input type="radio" name="bluremission" id="diamondBlur" value="1">
+								<label for="diamondBlur">Diamond</label>
+								<input type="radio" name="bluremission" id="boxBlur" value="2">
+								<label for="boxBlur">Box</label>
+							</fieldset>
+						
+						<input id="blurintensityemission" type="range" value="0" min="-64" max="64" style="width: 30%;" oninput="updateBlurIntensity(3,this.value); this.nextElementSibling.value = this.value;">
+						<input id="blurintensityemissionNum" oninput="this.previousElementSibling.value = this.value; updateBlurIntensity(3,this.value);" style="width: 15%;"/>
+						<label for="blurintensityemission">Threshold</label><br>
+					</fieldset>
+				</div>
+				
+			</section>
+			
+			<section id="pickerSection">
+				
+				<fieldset style="margin:auto; display: block; text-align: center; width: 80%">		
+					<h3>Color Ramps</h3>
+					<div style="display: inline-flex; margin: 0.5vw;">
+						<div id="colorSample" style="display: block; width: 2vw; height: 2vw; border: 1px solid black; border-radius: 50%; margin: 0.7vw;"></div>
+						<label style="margin: 1vw;">Picker Color</label><br>
+					</div>
+					<br>
+					
+					<div style="display: inline-flex; width: 100%; justify-content: space-between;">
+						<div></div><label>Color</label><label>Spread</label><label>Value</label><div></div>
+					</div>
+					
+					<div id="colorRampsContainerHeight">	
+					</div>
+					<div id="colorRampsContainerRoughness">	
+					</div>
+					<div id="colorRampsContainerMetalness">	
+					</div>
+					<div id="colorRampsContainerEmission">	
+					</div>
+					<br>
+					
+					<div onclick="addElement()" style="background-color: #aaa; border-radius: 50%; width: 1.5vw; height: 1.5vw; margin: auto; text-align: center">➕</div>
+					<br>
+				</fieldset>
+				
+			</section>
+			<br>
+			<button onclick="transferMapImage()">GENERATE</Button>
+			<br>
+		</div><!--}-->
+		
+		<!--single tile mode grid -->
+		<div class="grid-container">
+		
+			<div class="albedo"><!--{-->
+				<div class="helpico" onmouseover="showHelp(0)" onmouseout="hideHelp()">❔</div>
+				<div class="helpico numico">1</div>
+				<h5>- Texture -   &   - Height Map-</h5>
+				<div class="double-cell">
+					<div style="background-color: #222; border-radius: 2vh;">
+						<input id="texinput" type="file" onchange="addTexture()"></input>
+						<label for="texinput">📥 Upload</label>
+						<div style="display: block; background-color: #111;" onpaste="pasteTexture(event,0)" contenteditable="true">
+							<input style=" display: block; width: 0; height: 0; margin: 0; padding: 0; border: none"></input><!--small hack for clipboard paste-->
+							<canvas id="canvas"  onpaste="pasteTexture(event,0)" contenteditable="true" class="checkerBG" style="position: relative; width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						</div>	
+					</div>
+					<div style="background-color: #222; border-radius: 2vh">
+						<input id="heightinput" type="file" onchange="previewFile()"></input>
+						<label for="heightinput">📥 Upload</label>
+						<div style="display: block; background-color: #111;" onpaste="pasteTexture(event,1)" contenteditable="true">
+							<input style=" display: block; width: 0; height: 0; margin: 0; padding: 0; border: none"></input><!--small hack for clipboard paste-->
+							<canvas id="canvash" class="checkerBG" style="position: relative; width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						</div>
+						<button style="display: block; margin: auto" onclick="openbox()" contenteditable="false">FROM GREYSCALE</button>
+						<button style="display: block; margin: auto" onclick="openmapbox(0,0)" contenteditable="false">FROM TEXTURE</button>
+					</div>
+				</div>
+			</div><!--}-->
+			
+			<div class="tiling"><!--{-->
+				<div class="helpico" onmouseover="showHelp(1)" onmouseout="hideHelp()">❔</div>
+				<div class="helpico numico">2</div>
+				<h5>- Tiling Mode -</h5>
+				<div class="double-cell">
+					<div style="display: grid; grid-template-columns: auto auto auto;">
+						<div></div><div id="tilingUp" class="tileup" onclick="changeTiling('up')">⏹</div><div></div>
+						<div></div>
+						<div style="display: inline-flex; margin: auto;">
+							<div class="tileside" id="tilingLf" onclick="changeTiling('right')">⏹</div>
+							<canvas id="canvasresult" class="checkerBG" style="position: relative; width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:0; display: block;"></canvas>
+							<div class="tileside t-right" id="tilingRt" onclick="changeTiling('right')">⏹</div>
+						</div>
+						<div></div>
+						<div></div><div class="tileup t-down" id="tilingDw" onclick="changeTiling('up')">⏹</div><div></div>
+					</div>
+					<div>
+						<br><br>
+						<fieldset id="tileradio" style="margin:auto; display: block;">
+							<h5 class="less-mtop">Wrap Mode</h5>
+							<label>⏹ = Tile</label><br>
+							<label>⏩ = Clamp</label><br>
+							<label>⏺ = Bevel</label><br>
+					    </fieldset>
+						<br>
+						<input id="bevelintensity" type="range" style="width: 92%;" value="127" max="255" min="0" oninput="updateTileBevel(this.value); this.nextElementSibling.value = this.value;"/>
+						<input id="bevelintensityNum" oninput="this.previousElementSibling.value = this.value; updateTileBevel(this.value);" style="width: 15%;"/>
+						<label for="bevelintensity">Bevel Height</label>
+					</div>
+				</div>
+			</div><!--}-->
+			
+			<div class="emission"><!--{-->
+				<div class="helpico" onmouseover="showHelp(6)" onmouseout="hideHelp()">❔</div>
+				<h5>- Emission Map -</h5>
+				<div class="double-cell">
+					<div>
+						<input id="emissinput" type="file" onchange="addEmission()"></input>
+						<label for="emissinput">📥 Upload</label>
+						<canvas id="emissioncanvas" onclick="imgToClipboard(this);" class="checkerBG" style="position: relative; width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<button style="display: block; margin: auto" onclick="openmapbox(3,0)">FROM TEXTURE</button>
+						<button style="display: block; margin: auto" onclick="openmapbox(3,1)">FROM HEIGHT</button>
+					</div>
+					<!--
+					<div>
+						<fieldset id="emisliders" style="margin:auto; display: block;">
+							<input id="emiintensity" type="range" style="width: 92%;">
+							<label for="emiintensity">Intensity</label><br>
+							<input id="emisaturation" type="range" style="width: 92%;">
+							<label for="emisaturation">Saturation</label><br>
+						</fieldset>
+					</div>
+					-->
+				</div>
+			</div><!--}-->
+			
+			<div class="normal"><!--{-->
+				<div class="helpico" onmouseover="showHelp(2)" onmouseout="hideHelp()">❔</div>
+				<h5>- Normal Map -</h5>
+				<div class="double-cell">
+					<div>
+						<input id="norminput" type="file" onchange="addNormal()"></input>
+						<label for="norminput">📥 Upload</label>
+						<canvas id="canvasresultnormal" onclick="imgToClipboard(this);" class="checkerBG" style="width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<div style="text-align: center;">auto-gen</div>
+					</div>
+					
+					<div>
+						<fieldset style="margin:auto; display: block;">	
+							<h5 class="less-mtop">Kernel Shape</h5>
+							<div  id="normalradio" style="display: grid; grid-template-columns: 8% 42% 8% 42%">
+								<input type="radio" id="diamondnorm" name="norm" value="0" checked="checked">
+								<label for="diamondnorm">Diamond</label>
+								<input type="radio" id="octonorm" name="norm" value="1">
+								<label for="octonorm">Octogon</label>
+								<input type="radio" id="hardoctonorm" name="norm" value="2">
+								<label for="hardoctonorm">Circle</label>
+								<input type="radio" id="circlenorm" name="norm" value="3">
+								<label for="hardoctonorm">Square</label>
+							</div>
+							
+							<br>
+					    </fieldset>
+						<input id="normuplimit" type="range" style="width: 92%;" value="0" min="0" max="255" oninput="updateNormalUpLimit(this.value); this.nextElementSibling.value = this.value;">
+						<input id="normuplimitNum" oninput="this.previousElementSibling.value = this.value; updateNormalUpLimit(this.value);" style="width: 15%;"/>
+						<label for="normuplimit">Cutoff</label>
+						<br>
+						<input id="normintensity" type="range" style="width: 92%;" value="127" min="0" max="255" oninput="updateNormalIntensity(this.value); this.nextElementSibling.value = this.value;">
+						<input id="normintensityNum" oninput="this.previousElementSibling.value = this.value; updateNormalIntensity(this.value);" style="width: 15%;"/>
+						<label for="normintensity">Intensity</label><br>	
+					</div>
+				</div>	
+			</div><!--}-->
+			
+			<div class="roughness"><!--{-->
+				<div class="helpico" onmouseover="showHelp(4)" onmouseout="hideHelp()">❔</div>
+				<h5>- Roughness Map -</h5>
+				<div class="double-cell">
+					<div>
+						<input id="roughinput" type="file" onchange="addRoughness()"></input>
+						<label for="roughinput">📥 Upload</label>
+						<canvas id="roughcanvas" onclick="imgToClipboard(this);" class="checkerBG" style="width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<button style="display: block; margin: auto" onclick="openmapbox(1,0)">FROM TEXTURE</button>
+						<button style="display: block; margin: auto" onclick="openmapbox(1,1)">FROM HEIGHT</button>
+					</div>
+					<!--
+					<div>
+						<fieldset id="roughsliders" style="margin:auto; display: block;">
+							<h5 class="less-mtop">Curves</h5>
+							<input type="radio" id="roughlinear" name="rough" value="0" checked="checked">
+							<label for="roughlinear">Linear</label><br>
+							<input type="radio" id="roughsquared" name="rough" value="1">
+							<label for="roughsquared">Squared</label><br>
+							<input id="roughpivot" type="range" style="width: 90%;">
+							<label for="roughpivot">Pivot</label><br>
+							<input id="roughpivot" type="range" style="width: 90%;">
+							<label for="roughpivot">Gain</label><br>
+					    </fieldset>
+						<br>
+						<input id="roughintensity" type="range" style="width: 92%;">
+						<label for="roughintensity">Intensity</label><br>
+					</div>
+					-->
+				</div>	
+			</div><!--}-->
+			
+			<div class="aomap"><!--{-->
+				<div class="helpico" onmouseover="showHelp(3)" onmouseout="hideHelp()">❔</div>
+				<h5>- AO Map -</h5>
+				<div class="double-cell">
+					<div>
+						<input id="aoinput" type="file" onchange="addAo()"></input>
+						<label for="aoinput">📥 Upload</label>
+						<canvas id="canvasao" onclick="imgToClipboard(this);" class="checkerBG" style="width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<div style="text-align: center;">auto-gen</div>
+					</div>
+					<div>
+						<fieldset style="margin:auto; display: block;">
+							<h5 class="less-mtop">Kernel Shape</h5>
+							<div id="aoradio" style="display: grid; grid-template-columns: 8% 42% 8% 42%">
+								<input type="radio" id="diamondao" name="ao" value="0" checked="checked">
+								<label for="diamondao">Diamond</label>
+								<input type="radio" id="octoao" name="ao" value="1">
+								<label for="octoao">Octogon</label>
+								<input type="radio" id="hardoctoao" name="ao" value="2">
+								<label for="hardoctoao">Circle</label>
+								<input type="radio" id="circleao" name="ao" value="3">
+								<label for="hardoctoao">Square</label>
+							</div>
+							<br>
+					    </fieldset>
+						<br>
+						<input id="aointensity" type="range" style="width: 92%;" value="1" min="0" max="2" step="0.05" oninput="updateAOintensity(this.value); this.nextElementSibling.value = this.value;">
+						<input id="aointensityNum" oninput="this.previousElementSibling.value = this.value; updateAOintensity(this.value);" style="width: 15%;"/>
+						<label for="aointensity">Intensity</label><br>
+					</div>
+				</div>	
+			</div><!--}-->
+			
+			<div class="metalness"><!--{-->
+				<div class="helpico" onmouseover="showHelp(5)" onmouseout="hideHelp()">❔</div>
+				<h5>- Metalness Map -</h5>
+				<div class="double-cell">
+					<div>
+						<input id="metinput" type="file" onchange="addMetalness()"></input>
+						<label for="metinput">📥 Upload</label>
+						<canvas id="metalcanvas" onclick="imgToClipboard(this);" class="checkerBG" style="width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<button style="display: block; margin: auto" onclick="openmapbox(2,0)">FROM TEXTURE</button>
+						<button style="display: block; margin: auto" onclick="openmapbox(2,1)">FROM HEIGHT</button>
+					</div>
+					<!--
+					<div>
+						<fieldset id="metalsliders" style="margin:auto; display: block;">
+						<h5 class="less-mtop">Curves</h5>
+						<input type="radio" id="metlinear" name="metal" value="0" checked="checked">
+					    <label for="metlinear">Linear</label><br>
+					    <input type="radio" id="metsquared" name="metal" value="1">
+					    <label for="metsquared">Squared</label><br>
+						<input id="metpivot" type="range" style="width: 90%;">
+						<label for="metpivot">Pivot</label><br>
+						<input id="metpivot" type="range" style="width: 90%;">
+						<label for="metpivot">Gain</label><br>
+					    </fieldset>
+						<br>
+						<input id="metintensity" type="range" style="width: 92%;">
+						<label for="metintensity">Intensity</label><br>
+					</div>
+					-->
+				</div>	
+			</div><!--}-->
+			
+			<div class="renderer" style="height: 62.7vh;"><!--{-->
+				<div id="canvas3d" style="width: 25vw; height: 40vh; margin: auto; margin-top: 1vh; margin-bottom: 0; border: 0px solid red;">
+				</div>
+
+				<h5>- Settings -</h5>
+				<div class="double-cell">
+					<div>
+						<fieldset id="setsliders" style="margin:auto; display: block;">
+							<h5 class="less-mtop">Lights</h5>
+							<input id="ambintensity" type="range" style="width: 92%;" value="0.3" min="0" max="2" step="0.05" oninput="updateAmbientInt(this.value);">
+							<label for="ambintensity">Ambient</label><br>
+							<input id="pointintensity" type="range" style="width: 92%;" value="0.7" min="0" max="2" step="0.05" oninput="updatePointInt(this.value);">
+							<label for="pointintensity">Point</label><br>
+						</fieldset>	
+					</div>
+					<div>
+						<fieldset id="envset" style="margin:auto; display: block;">
+							<h5 class="less-mtop">Environment</h5>
+							<button onclick="changeEnvironmentMap()">RANDOMIZE ENV</button>
+							<h5>Rotation</h5>
+							<input id="rotspeed" type="range" style="width: 92%;" value="400" min="100" max="1000" oninput="updateRotInt(1100-this.value);">
+							<label for="rotspeed">Speed</label><br>
+						</fieldset>	
+					</div>
+				</div>
+			</div><!--}-->
+			
+			<div class="rme"><!--{-->
+				<div class="helpico" onmouseover="showHelp(7)" onmouseout="hideHelp()">❔</div>
+				<h5>- RME Combined Map -</h5>
+				<div class="double-cell">
+					<div>
+						<canvas id="canvasRME" onclick="imgToClipboard(this);" class="checkerBG" style="width: 7.5vw; height: 7.5vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+						<button style="display: block; margin: auto" onclick="genRME()">GENERATE</button>
+						<a style="color: #2196F3; font-size: calc(0.4vw + 6px); display: block; margin: 1vh 0 0 0; text-align: center; cursor: pointer" id="rmeDownloadBtn">DOWNLOAD</a>
+					</div>
+					<div>
+						
+						<fieldset id="rgba-r" style="margin:auto; display: block; text-align: center; width: 80%">
+							<h5 class="less-mtop">R G B A</h5>
+							<input type="radio" name="rgbar" id="r1" value="0">
+							<input type="radio" name="rgbar" id="r2" value="1">
+							<input type="radio" name="rgbar" id="r3" value="2">
+							<input type="radio" name="rgbar" id="r4" value="3" checked="checked"><br>
+							<label>Roughness</label>
+							
+						</fieldset>
+						
+						<fieldset id="rgba-m" style="margin:auto; display: block; text-align: center; width: 80%">
+							
+							<input type="radio" name="rgbam" id="m1" value="0">
+							<input type="radio" name="rgbam" id="m2" value="1">
+							<input type="radio" name="rgbam" id="m3" value="2" checked="checked">
+							<input type="radio" name="rgbam" id="m4" value="3"><br>
+							<label>Metalness</label>
+						</fieldset>
+						
+						<fieldset id="rgba-e" style="margin:auto; display: block; text-align: center; width: 80%">
+							
+							<input type="radio" name="rgba" id="e1" value="0">
+							<input type="radio" name="rgba" id="e2" value="1" checked="checked">
+							<input type="radio" name="rgba" id="e3" value="2">
+							<input type="radio" name="rgba" id="e4" value="3"><br>
+							<label>Emission</label>
+						</fieldset>
+						
+						<fieldset id="rgba-ao" style="margin:auto; display: block; text-align: center; width: 80%">
+							
+							<input type="radio" name="rgbaao" id="ao1" value="0" checked="checked">	
+							<input type="radio" name="rgbaao" id="ao2" value="1">
+							<input type="radio" name="rgbaao" id="ao3" value="2">
+							<input type="radio" name="rgbaao" id="ao4" value="3"><br>
+							<label>AO</label>
+							
+							
+						</fieldset>
+
+				</fieldset>
+					</div>
+				</div>	
+			</div><!--}-->
+			
+		</div>
+	
+	</div>
+
+
+<script>
+{
+    //firefox won't support some:
+	///[-]add drag and drop to upload texture
+	///[x]add copy and paste to canvases
+	///[-]copy canvas on click 
+	//are batch downloads a necessity?
+	///[-]make single and zip/batch downloads
+	//RME has an alpha channel, copying a canvas image won't copy its alpha channel for some reason
+	///[x]make RME save button
+	
+	//[]curves: add quadratic and sqrt options
+	///[x]add light direction calc for all directions
+	///[x]add environment maps and interchangeability
+	//[]add Roughness to Smoothness interchangeability
+	//[]make full and zero map coloring for RME (totally white or totally black opts) 
+	
+	//[]make a video tutorial on how to use
+	
+	//[?]'clear map' button
+	//[?]repeat/tile texture on preview window
+	///[x]add gallery page
+	//[]add Brave browser tips
+	//[?]add pixel art course advertising
+	//[?]add random ads
+	//[]add google/yahoo/bing/duckduckgo spider/crawler
+	//[]publish
+	
+	//left panel buttons
+	let galleryButton = document.getElementById("galleryBtn");
+	let tileButton = document.getElementById("tileBtn");
+	let galleryOverlay = document.getElementById("galleryOverlay");
+	
+	function showGallery(bool){
+		if(bool){galleryOverlay.style.visibility = "visible"; tileButton.style.backgroundColor = "#333"; galleryButton.style.backgroundColor = "#2196F3";}
+		else{galleryOverlay.style.visibility = "hidden"; tileButton.style.backgroundColor = "#2196F3"; galleryButton.style.backgroundColor = "#333";}
+	}
+	
+	//help info
+	let helpWin = document.getElementById("help");
+	let helpTitles= ["Getting Started","Tiling Mode","Normal Map Attributes","AO Map Attributes","Roughness Map Workflow","Metalness Map Workflow","Emission Map","RME Map"];
+	let helpTexts = ["A texture should be provided by: <br><br> * Clicking the 'Upload' button located above the first frame. <br><br> * Clicking the first frame and pasteing an image. <br><br> This tool is meant for small sized images (< 128px).<br><br> The 'From Texture' button opens a tiny window and can provide good results depending on the input texture qualities. For better results, a heightmap shall be imported (paste or upload). <br><br> The heightmap generator can blur the image in the light direction for providing a tiny improvement over textures with large, lit, areas. It should be avoided on finely detailed textures. Finally, two 'Curves' sliders allow for contrast adjustment and there are a few 'Smart Blur' options for smudging the heightmap whilst keeping the fundamental or 'contrastful' features of the image.",
+					"Clicking the buttons located around the frame will change the vertical and horizontal tiling modes.<br><br> Tile mode is preffered most of the times and is fundamental for making tileable normal maps. Clamp mode can be useful for tiles that won't connect to other tiles.",
+					"The normal map is generated based on the height map. <br><br> A few 'Kernel Shapes' are provided, they will change how the normal map is generated, from sharpest to smoothest. Give it a try.",
+					"The AO map is generated based on the height map and the different filters provided show really subtle changes. <br><br> It is not the most important map, but under the right conditions can be useful.",
+					"Black means a totally smooth surface, white means totally rough. It's the exact opposite of a Smoothness map.",
+					"Metallic map represents whether the material reflects the environment or not. White means totally metallic, black means not metallic. In-between values are generally used for rusted metals only.",
+					"The Emission Map is necessary for creating glowy or light emitting regions on the texture. It's great for creating magma, sci-fi, alien or any kind of glowy stuff. <br><br> Black means no glow, all other colors correspond to a different level of glow.",
+					"The RME map is generally a combo of Metalness, Roughness, Emission and AO maps. Each channel of this map (RGBA) represents a different map, in greyscale."];
+	//help window
+	function showHelp(num){
+		helpWin.style.opacity = "1";
+		helpWin.style.visibility = "visible";	
+		helpWin.children[0].innerHTML = helpTitles[num];
+		helpWin.children[2].innerHTML = helpTexts[num];
+	}
+	function hideHelp(){
+		helpWin.style.opacity = "0";
+		helpWin.style.visibility = "hidden";		
+	}
+	
+	//define all main UI canvas
+	let canvas = document.getElementById("canvas");//texture/color map
+	let canvash = document.getElementById("canvash");//height map
+	let canvasao = document.getElementById("canvasao");//ao map
+	let canvasemission = document.getElementById("emissioncanvas");//emission map 
+	let result = document.getElementById("canvasresult");//tiling window
+	let normal = document.getElementById("canvasresultnormal");//normal map
+	let canvasmetal = document.getElementById("metalcanvas");//metalness map
+	let canvasrough = document.getElementById("roughcanvas");//roughness map
+	let container = document.getElementById("canvas3d");//3d cube preview
+	//and their contexts
+	let ctx = canvas.getContext('2d');
+	let ctxh = canvash.getContext('2d');
+	let ctxao = canvasao.getContext('2d');
+	let ctxem = canvasemission.getContext('2d');
+	let ctxres = result.getContext('2d');
+	let ctxnor = normal.getContext('2d');
+	let ctxmet = canvasmetal.getContext('2d');
+	let ctxrou = canvasrough.getContext('2d');
+	
+	//handle for images
+	let img = document.createElement("img");
+	let imgres = document.createElement("img");
+	
+	let clipBoardImg; //save clipboard image when pasted
+	
+	let iwidth, iheight;
+	
+	let alphaThreshold = 128;// =0.5
+	
+	let tilingUp = 1;
+	let tilingLf = 1;
+	
+	let tpWd = 0;//tile pixel width
+	let tpHt = 0;//tile pixel height
+	
+	let updateNeeded = false;
+	
+	//paste listener to Albedo and Height
+	function pasteTexture(e, id){
+		e.preventDefault();
+		console.log(e);
+		//console.log(e.clipboardData.items[0].type);
+		
+		if(e.clipboardData.items[0].type == "image/png"){
+			
+			clipBoardImg = e.clipboardData.items[0].getAsFile();
+			if(id == 1){
+				previewFile(clipBoardImg);
+			}
+			else if(id == 0){
+				addTexture(clipBoardImg);
+			}
+			
+		}
+		
+		
+	}
+	
+	//copy to clipboard from canvas elem
+	function imgToClipboard(elem){
+		console.log("clicked");
+		elem.toBlob(async function(blob) {
+
+			try{
+				await navigator.clipboard.write([
+					new ClipboardItem({
+						[blob.type]: blob
+					})
+				]);
+			}
+			catch(err){
+				alert("Your browser does not support the clipboard API. Try a chromium based browser.");
+			}
+
+			elem.style.border = "5px solid #2196f3";
+			elem.style.transition = "border 0.3s";
+			setTimeout(function () {
+				elem.style.border = "0px solid #333";
+			}, 400);
+					
+		});
+		
+	}
+	
+	//check if canvas has received an image
+	function isCanvasBlank(canvas) {
+	    return !canvas.getContext('2d')
+		    .getImageData(0, 0, canvas.width, canvas.height).data
+		    .some(channel => channel !== 0);
+	}
+	
+	//switch tiling mode for each side
+	function changeTiling(tiling){
+		
+		let topTile = document.getElementById("tilingUp");
+		let lefTile = document.getElementById("tilingLf");
+		let rigTile = document.getElementById("tilingRt");
+		let dowTile = document.getElementById("tilingDw");
+		
+		if(tiling == "up"){ tilingUp += 1; }
+		if(tiling == "right"){ tilingLf += 1; }
+		if(tilingUp > 2){ tilingUp = 0; }
+		if(tilingLf > 2){ tilingLf = 0; }
+		if(tilingUp == 0){ topTile.innerHTML = "⏫"; dowTile.innerHTML = "⏬"; }else if(tilingUp == 1){ topTile.innerHTML = "⏹"; dowTile.innerHTML = "⏹"; }else{ topTile.innerHTML = "⏺"; dowTile.innerHTML = "⏺"; }
+		if(tilingLf == 0){ lefTile.innerHTML = "⏪"; rigTile.innerHTML = "⏩"; }else if(tilingLf == 1){ lefTile.innerHTML = "⏹"; rigTile.innerHTML = "⏹"; }else{ lefTile.innerHTML = "⏺"; rigTile.innerHTML = "⏺"; }
+		
+		if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			editImage();
+		}
+	}
+	
+	var bevelHeight = 127;
+	function updateTileBevel(val){
+		bevelHeight = val;
+		if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			editImage();
+		}
+	}
+	
+	//radio buttons normal
+	let rad = document.getElementById("normalradio").children;
+	let normalFilterValue = 0;
+	
+	for (let i = 0; i < rad.length; i++) {
+		rad[i].addEventListener('change', function() {
+			if (this.value !== normalFilterValue) {
+				normalFilterValue = this.value;
+				//console.log(normalFilterValue.value);
+				if(!isCanvasBlank(canvash)){//has image
+					editImage();
+				}
+			}
+		});
+	}
+	
+	//radio buttons AO
+	let rao = document.getElementById("aoradio").children;
+	let aoFilterValue = 0;
+	
+	for (let i = 0; i < rao.length; i++) {
+		rao[i].addEventListener('change', function() {
+			if (this.value !== aoFilterValue) {
+				aoFilterValue = this.value;
+				//console.log(normalFilterValue.value);
+				if(!isCanvasBlank(canvash)){//has image
+					editImage();
+				}
+			}
+		});
+	}
+	
+	//Invert checkbox
+	let invertedVals = [false,false,false,false];
+	function updateInvertOpt(num,val){
+		//num: 0 = height from tex, 1 = rough, 2 = metal, 3 = emission
+		invertedVals[num] = val;
+		
+		if(num == 0){ heightFromTexture(); }
+		else{ mapsFromTextures(1,num); }
+	}
+	
+	//AO intensity slider
+	let aoIntensity = 1;
+	function updateAOintensity(val){
+		aoIntensity = val;
+		if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			editImage();
+		}
+	}
+		
+	//Normal intensity slider
+	let normalIntensity = 127;
+	function updateNormalIntensity(val){
+		normalIntensity = val;
+		if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			editImage();
+		}
+	}
+	//Normal intensity slider
+	let normalUpLimit = 0;
+	let normalLowLimit = 0;
+	function updateNormalUpLimit(val){
+		normalUpLimit = val;
+		normalLowLimit = -val;
+		if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			editImage();
+		}
+	}
+
+	// heightmap curve pivot
+	let curvePivot = [20,20,20,20];
+	function updateCurvePivot(num,val){
+		//num: 0 = height from tex, 1 = rough, 2 = metal, 3 = emission
+		curvePivot[num] = val;
+		if(num == 0){ heightFromTexture(); }
+		else{ mapsFromTextures(1,num); }
+	}
+	//heightmap curve intensity
+	let curveInt = [0,0,0,0];
+	function updateCurveInt(num,val){
+		//num: 0 = height from tex, 1 = rough, 2 = metal, 3 = emission
+		curveInt[num] = val;
+		if(num == 0){ heightFromTexture(); }
+		else{ mapsFromTextures(1,num); }
+	}
+	
+	//directional blur intensity slider
+	let dBlurV = 2;
+	function updateDirectionBlur(val){
+		dBlurV = val;
+		heightFromTexture();
+	}
+	
+	//direction blue threshold slider
+	let dBlurThreshold = 127;
+	function updateDirectionThreshold(val){
+		dBlurThreshold = val;
+		heightFromTexture();
+	}
+	
+	//smart blur intensity slider
+	let blurThreshold = [0,0,0,0];
+	function updateBlurIntensity(num,val){
+		//num: 0 = height from tex, 1 = rough, 2 = metal, 3 = emission
+		blurThreshold[num] = val;
+		if(num == 0){ heightFromTexture(); }
+		else{ mapsFromTextures(1,num); }
+	}
+	
+	var alphaMapCanvas = document.createElement("canvas");
+	var ctxAlpha = alphaMapCanvas.getContext('2d');
+	
+	function addTexture(f)
+	{
+		let file = null;
+		
+		if(f == null){
+			file = document.getElementById("texinput").files[0];
+		}
+		else{
+			file = f;
+		}
+		
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvas.width = img.naturalWidth;
+				canvas.height = img.naturalHeight;
+				tpWd = img.naturalWidth;
+				tpHt = img.naturalHeight;
+				ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);	
+				
+				//extract alphamap for three.js 
+				let data = ctx.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+				//console.log(data);
+				let imgDataA = ctxAlpha.createImageData(tpWd, tpHt);
+				for (let i = 0; i < data.data.length; i += 4) 
+				{                     		
+					imgDataA.data[i] = data.data[i+3]; //r
+					imgDataA.data[i+1] = data.data[i+3]; //g
+					imgDataA.data[i+2] = data.data[i+3]; //b
+					imgDataA.data[i+3] = data.data[i+3]; //a
+				} 
+				alphaMapCanvas.width = img.naturalWidth;
+				alphaMapCanvas.height = img.naturalHeight;
+				ctxAlpha.putImageData(imgDataA, 0, 0);
+				//end alpha map
+				
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function addNormal()
+	{
+		let file = document.getElementById("norminput").files[0];
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvasresultnormal.width = img.naturalWidth;
+				canvasresultnormal.height = img.naturalHeight;
+				ctxnor.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function addAo()
+	{
+		let file = document.getElementById("aoinput").files[0];
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvasao.width = img.naturalWidth;
+				canvasao.height = img.naturalHeight;
+				ctxao.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function addEmission()
+	{
+		let file = document.getElementById("emissinput").files[0];
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvasemission.width = img.naturalWidth;
+				canvasemission.height = img.naturalHeight;
+				ctxem.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function addMetalness()
+	{
+		let file = document.getElementById("metinput").files[0];
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvasmetal.width = img.naturalWidth;
+				canvasmetal.height = img.naturalHeight;
+				ctxmet.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);	
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function addRoughness()
+	{
+		let file = document.getElementById("roughinput").files[0];
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvasrough.width = img.naturalWidth;
+				canvasrough.height = img.naturalHeight;
+				ctxrou.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);	
+				updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	//open close box functions
+	function openbox(){
+		if(!isCanvasBlank(canvas)){//check if we have a heightmap
+			document.getElementById("heightfromtex-box").style.visibility = "visible";
+			heightFromTexture();
+		}	
+		else{ alert("Please add a texture first!"); }
+	}
+	function closebox(){
+		document.getElementById("heightfromtex-box").style.visibility = "hidden";
+	}
+	
+	//map names
+	let mapN = ["Height", "Roughness", "Metalness", "Emission"];
+	let currentMap = "Roughness";//remember which map we are currently editing
+	let sampledCol;
+	//open close roughness, metalness and emission functions box
+	function openmapbox(map,src){
+		//src 0 = texture, 1 = height map
+		//map 0 = height, 1 = roughness, 2 = metalness, 3 = emission
+			
+		document.getElementById("greyscaleSection").style.display = "none";	
+		document.getElementById("pickerSection").style.display = "none";	
+			
+		document.getElementById("colorRampsContainerRoughness").style.display = "none";
+		document.getElementById("colorRampsContainerMetalness").style.display = "none";
+		document.getElementById("colorRampsContainerEmission").style.display = "none";
+		document.getElementById("colorRampsContainerHeight").style.display = "none";
+		
+		document.getElementById("RoughnessFromHeightContainer").style.display = "none";
+		document.getElementById("MetalnessFromHeightContainer").style.display = "none";
+		document.getElementById("EmissionFromHeightContainer").style.display = "none";
+
+		currentMap = mapN[map];
+		
+		if(src == 0){//texture
+			if(!isCanvasBlank(canvas) && src == 0){//check if we have a tex
+				
+				if(map == 1){document.getElementById("colorRampsContainerRoughness").style.display = "block";}
+				if(map == 2){document.getElementById("colorRampsContainerMetalness").style.display = "block";}
+				if(map == 3){document.getElementById("colorRampsContainerEmission").style.display = "block";}
+				if(map == 0){document.getElementById("colorRampsContainerHeight").style.display = "block";}
+					
+				document.getElementById("pickerSection").style.display = "block";
+				
+				document.getElementById("mapsfromtex-box").style.visibility = "visible";
+				document.getElementById("mapFromName").innerHTML = mapN[map] + " from Texture";
+				mapsFromTextures(0,map);
+			}
+			else{ alert("Please add a texture first!"); }
+		}
+		else{//heightmap
+			if(!isCanvasBlank(canvash)){//check if we have a heightmap
+			    
+				if(map == 1){document.getElementById("RoughnessFromHeightContainer").style.display = "block";}
+				if(map == 2){document.getElementById("MetalnessFromHeightContainer").style.display = "block";}
+				if(map == 3){document.getElementById("EmissionFromHeightContainer").style.display = "block";}
+				
+				document.getElementById("greyscaleSection").style.display = "block";
+				
+				document.getElementById("mapsfromtex-box").style.visibility = "visible";
+				document.getElementById("mapFromName").innerHTML = mapN[map] + " from Height";
+				mapsFromTextures(1,map);
+			}	
+			else{ alert("Please add or generate a height map first!"); }
+		}
+	}
+	function closemapbox(){
+		document.getElementById("mapsfromtex-box").style.visibility = "hidden";
+	}
+	
+	
+	//radio buttons Blur
+	let rab = document.getElementById("blurRadios").children;
+	let blurFilterValue = 0;
+	
+	for (let i = 0; i < rab.length; i++) {
+		rab[i].addEventListener('change', function() {
+			if (this.value !== blurFilterValue) {
+				blurFilterValue = this.value;
+				if(!isCanvasBlank(canvas)){//has image
+					heightFromTexture();
+				}
+			}
+		});
+	}
+	
+	//radio buttons Roughness From Height
+	let rabh = document.getElementById("roughBlurRadios").children;
+	let roughBlurFilterValue = 0;
+	
+	for (let i = 0; i < rabh.length; i++) {
+		rabh[i].addEventListener('change', function() {
+			if (this.value !== roughBlurFilterValue) {
+				roughBlurFilterValue = this.value;
+				if(!isCanvasBlank(canvash)){//has image
+					mapsFromTextures(1,1);
+				}
+			}
+		});
+	}
+	
+	//radio buttons Metalness From Height
+	let rabl = document.getElementById("blurRadiosMetalness").children;
+	let metalBlurFilterValue = 0;
+	
+	for (let i = 0; i < rabl.length; i++) {
+		rabl[i].addEventListener('change', function() {
+			if (this.value !== metalBlurFilterValue) {
+				metalBlurFilterValue = this.value;
+				if(!isCanvasBlank(canvash)){//has image
+					mapsFromTextures(1,2);
+				}
+			}
+		});
+	}
+	
+	//radio buttons Emission From Height
+	let rabe = document.getElementById("blurRadiosEmission").children;
+	let emissionBlurFilterValue = 0;
+	
+	for (let i = 0; i < rabe.length; i++) {
+		rabe[i].addEventListener('change', function() {
+			if (this.value !== emissionBlurFilterValue) {
+				emissionBlurFilterValue = this.value;
+				if(!isCanvasBlank(canvash)){//has image
+					mapsFromTextures(1,3);
+				}
+			}
+		});
+	}
+	
+	//height from texture canvas///////////////////////////////////
+	let canvas1pre = document.getElementById("canvas1pre");
+	let canvas2pre = document.getElementById("canvas2pre");
+	let pre1 = canvas1pre.getContext('2d');
+	let pre2 = canvas2pre.getContext('2d');
+	
+	//roughness, metalness, emission from texture or height////////
+	let canvas3pre = document.getElementById("canvas3pre");
+	let canvas4pre = document.getElementById("canvas4pre");
+	let pre3 = canvas3pre.getContext('2d');
+	let pre4 = canvas4pre.getContext('2d');
+	
+	var sampX, sampY = 0;
+	
+	//sample pixel
+	canvas3pre.addEventListener("mousedown", function(e) 
+    { 
+        let rect = canvas3pre.getBoundingClientRect(); 
+		let x = event.clientX - rect.left; 
+		let y = event.clientY - rect.top; 
+		
+		sampX = Math.ceil((x / canvas3pre.clientWidth) * tpWd); 
+		sampY = Math.ceil((y / canvas3pre.clientHeight) * tpHt);  
+		//console.log("pixel: "+ sampX + " : " + sampY);
+		
+		//calculate pixel color
+		let canvData = ctx.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+		let pixIdx = 4*(sampY-1)*tpWd + 4*(sampX-1);
+		sampledCol = [canvData.data[pixIdx],canvData.data[pixIdx+1],canvData.data[pixIdx+2]];
+		//console.log(sampledCol);
+		//change color sample bg color
+		document.getElementById("colorSample").style.backgroundColor = "rgb("+canvData.data[pixIdx]+","+canvData.data[pixIdx+1]+","+canvData.data[pixIdx+2]+")";
+		//heightFromTexture();
+    });
+	
+	//sampled colors, from 0 to infinite, defining a metalness
+	let metalColors = [];
+	let metalSprVal = [];
+	//sampled colors, from 0 to infinite, defining a roughness
+	let roughColors = [];
+	let roughSprVal = [];
+	//sampled colors, from 0 to infinite, defining an emission
+	let emissiveColors = [];
+	let emissiveSprVal = [];
+	//sampled colors, from 0 to infinite, defining an emission
+	let heightColors = [];
+	let heightSprVal = [];
+	
+	//html element for the color picker-editor
+	let divColorAdjust = '<div style="display: inline-flex; width: 100%; justify-content: space-between;"><div style="display: block; width: 2vh; height:2vh; background-color: blue; margin-left: 1vw;"></div><input oninput="updateColorRamp(0,this); this.nextElementSibling.value = this.value;" type="range" max="127" min="1" value="1" style="width: 30%;"><input oninput="this.previousElementSibling.value = this.value; updateColorRamp(0,this);" style="width: 10%;"/><input oninput="updateColorRamp(1,this); this.nextElementSibling.value = this.value;" type="range" max="255" style="width: 30%;"><input oninput="this.previousElementSibling.value = this.value; updateColorRamp(1,this);" style="width: 10%;"/><div onclick="removeElement(this)" style="background-color: #aaa; border-radius: 50%; width: 1.5vw; height: 1.5vw; margin: auto; text-align: center">➖</div><br></div>';
+	
+	function addElement(){
+		
+		var newLine = document.createElement('div');
+		newLine.innerHTML = divColorAdjust;
+
+		let colVal = JSON.stringify(sampledCol);
+		//console.log(currentMap);
+		if(currentMap == mapN[1]){ //roughness
+			if(!roughColors.includes(colVal))//check if col is already into array
+			{
+				roughColors.push(colVal);
+				roughSprVal.push([1,127]);
+				
+				document.getElementById("colorRampsContainerRoughness").appendChild(newLine);
+			}
+		}
+		if(currentMap == mapN[2]){ //metalness
+			if(!metalColors.includes(colVal))//check if col is already into array
+			{
+				metalColors.push(colVal);
+				metalSprVal.push([0,127]);
+				
+				document.getElementById("colorRampsContainerMetalness").appendChild(newLine);
+			}
+		}
+		if(currentMap == mapN[3]){ //emission
+			if(!emissiveColors.includes(colVal))//check if col is already into array
+			{
+				emissiveColors.push(colVal);
+				emissiveSprVal.push([0,127]);
+				
+				document.getElementById("colorRampsContainerEmission").appendChild(newLine);
+			}
+		}
+		if(currentMap == mapN[0]){ //height
+			if(!heightColors.includes(colVal))//check if col is already into array
+			{
+				heightColors.push(colVal);
+				heightSprVal.push([0,127]);
+				
+				document.getElementById("colorRampsContainerHeight").appendChild(newLine);
+			}
+		}
+		
+		newLine.children[0].children[0].style.backgroundColor = "rgb("+ sampledCol[0] + "," + sampledCol[1] + "," + sampledCol[2] + ")";
+	}
+	
+	function removeElement(element){
+		
+		let parent = element.parentNode.parentNode.parentNode;
+	    let idx = Array.prototype.indexOf.call(parent.childNodes, element.parentNode.parentNode) -1;
+		
+		if(currentMap == mapN[1]){ //roughness
+			roughColors.splice(idx,1);
+		}
+		if(currentMap == mapN[2]){ //metalness
+			metalColors.splice(idx,1);
+		}
+		if(currentMap == mapN[3]){ //emissive
+			emissiveColors.splice(idx,1);
+		}
+		if(currentMap == mapN[0]){ //height
+			heightColors.splice(idx,1);
+		}
+	
+		parent.removeChild(element.parentNode.parentNode);
+		
+	}
+	
+	function updateColorRamp(type, element){ //type: 0-spread 1-value
+		
+		let parent = element.parentNode.parentNode.parentNode;
+	    let idx = Array.prototype.indexOf.call(parent.childNodes, element.parentNode.parentNode) -1;
+		let value = element.value;
+		
+		if(currentMap == mapN[1]){ roughSprVal[idx][type] = parseInt(element.value); }
+		if(currentMap == mapN[2]){ metalSprVal[idx][type] = parseInt(element.value); }
+		if(currentMap == mapN[3]){ emissiveSprVal[idx][type] = parseInt(element.value); }
+		if(currentMap == mapN[0]){ heightSprVal[idx][type] = parseInt(element.value); }
+		//console.log(roughSprVal[idx]);
+		
+		mapsFromTextures(0,0);
+	}
+	
+	function mapsFromTextures(base, map){
+		
+		canvas3pre.width = tpWd;
+		canvas3pre.height = tpHt;
+		canvas4pre.width = tpWd;
+		canvas4pre.height = tpHt;
+		
+		var imgData;
+		
+		if(base == 0){ //from texture
+			pre3.drawImage(canvas, 0, 0);
+		
+			imgData = ctx.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+		}
+		else{ //from height
+			pre3.drawImage(canvash, 0, 0);
+		
+			imgData = ctxh.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+		}
+		let imgDataS = pre3.createImageData(tpWd, tpHt);
+		let data = imgData.data;
+		
+		//map 0 = height, 1 = roughness, 2 = metalness, 3 = emission
+		let invertCheck = invertedVals[map];
+		
+		let pixels = [];
+		let rgbPixels = [];
+		//Read image and store RGB pixels 
+		for (i = 0; i < data.length; i += 4) 
+		{                     		
+			//ensure to make it greyscale w/o transparency
+			if(imgData.data[i+3] < alphaThreshold){
+				mean = 0; //if has transparency -> black pixel
+			}
+			else{
+				//unbalanced greyscale
+				mean = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2])/3;
+				if(invertCheck){
+					mean = 255 - mean;
+				}
+			}
+			pixels.push(Math.round(mean));
+			rgbPixels.push([imgData.data[i],imgData.data[i+1],imgData.data[i+2],imgData.data[i+3]]);
+		} 
+		
+		//sampled color
+		if(sampledCol == null){//if no color has been picked, initialize with the pixel 0 color
+			sampledCol = [imgData.data[0],imgData.data[1],imgData.data[2]];
+			document.getElementById("colorSample").style.backgroundColor = "rgb("+imgData.data[0]+","+imgData.data[1]+","+imgData.data[2]+")";
+			addElement();
+		}	
+
+		//make the array a matrix
+		let mat = toMatrix(pixels, tpWd);
+		let rgbMat = toMatrix(rgbPixels, tpWd);
+		//create a new matrix with 1px border for tileing
+		let matplus = [];
+		for(let i = 0; i < tpHt + 2; i++){
+			let mArr = [];
+			for(let j = 0; j < tpWd + 2; j++){
+				mArr.push(255);
+			}
+			matplus.push(mArr);
+		}	
+		
+		//fill all borders for mapping the edges correctly 
+		
+		//fill 4 edges
+		matplus[0][0]   = mat[tpHt-1][tpWd-1];
+		matplus[0][tpWd+1]  = mat[tpHt-1][0];
+		matplus[tpHt+1][0]  = mat[0][tpWd-1];
+		matplus[tpHt+1][tpWd+1] = mat[0][0];
+		//fill center
+		for(let i = 1; i <= tpHt; i++){	
+			for(let j = 1; j <= tpWd; j++){
+				matplus[i][j] = mat[i-1][j-1];
+			}
+		}
+		
+		//fill top, bottom, left, right
+		// 0 = clamp, 1 = tile, 2 = bevel
+		if(tilingUp == 1){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[tpHt-1][i-1];//top
+				matplus[tpHt+1][i] = mat[0][i-1];//bottom	
+			}
+		}else if (tilingUp == 0){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[0][i-1];//top
+				matplus[tpHt+1][i] = mat[tpHt-1][i-1];//bottom	
+			}	
+		}else{
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = parseInt(bevelHeight);//top
+				matplus[tpHt+1][i] = parseInt(bevelHeight);//bottom	
+			}
+		}
+			
+		if(tilingLf == 1){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][tpWd-1];//left
+				matplus[i][tpWd+1] = mat[i-1][0];//right
+			}
+		}else if(tilingLf == 0){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][0];//left
+				matplus[i][tpWd+1] = mat[i-1][tpWd-1];//right
+			}
+		}else{
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = parseInt(bevelHeight);//left
+				matplus[i][tpWd+1] = parseInt(bevelHeight);//right
+			}
+		}
+		
+		//create a copy of the matrix
+		let newmat = JSON.parse(JSON.stringify(matplus)); //ORIGINAL texture
+		let newmat1 = JSON.parse(JSON.stringify(matplus));
+		let newmat2 = JSON.parse(JSON.stringify(matplus)); 
+		
+		let rgbmat1 = JSON.parse(JSON.stringify(rgbMat)); 
+		let rgbmat2 = JSON.parse(JSON.stringify(rgbMat));
+		
+		if(base == 1){ //from height
+		
+			//variables for light X Y direction
+			/*
+			let xyDir = { x: 0, y: 0 };
+			let totalX = 0;
+			let totalY = 0;
+			// calculate light direction
+			for(let i = 1; i <= tpHt; i++){
+				for(let j = 1; j <= tpWd; j++){
+					
+					//up
+					if( newmat[i][j-1] > newmat[i][j] ){ xyDir.y -= 1; totalY++;}
+					//down
+					if( newmat[i][j+1] > newmat[i][j] ){ xyDir.y += 1; totalY++;}
+					//left
+					if( newmat[i-1][j] > newmat[i][j] ){ xyDir.x += 1; totalX++;}
+					//right
+					if( newmat[i+1][j] > newmat[i][j] ){ xyDir.x -= 1; totalX++;}			
+				}
+			}
+			xyDir.x /= totalX;
+			xyDir.y /= totalY;
+			
+			let vecLen = Math.sqrt(xyDir.x*xyDir.x + xyDir.y*xyDir.y);
+			xyDir.x /= vecLen;
+			xyDir.y /= vecLen;
+			
+			//convert to rad and apply light direction-rotation to visual element
+			let arc = Math.atan2(xyDir.y,xyDir.x) + Math.PI/2;
+			document.getElementById("liteArrow").style.transform = "rotate("+ arc +"rad)";
+			*/
+			
+			let bVal = 0;
+			if(map == 1){ bVal = roughBlurFilterValue; }//roughness
+			if(map == 2){ bVal = metalBlurFilterValue; }//metalness
+			if(map == 3){ bVal = emissionBlurFilterValue; }//emission
+			
+			//apply smart blur 
+			for(let i = 1; i <= tpHt; i++){
+				for(let j = 1; j <= tpWd; j++){
+					
+					
+					let variance = 0;
+					let value = 0;
+					//0 - 255
+					variance = ((newmat[i-1][j] - newmat[i][j]) + 
+								(newmat[i+1][j] - newmat[i][j]) +
+								(newmat[i][j-1] - newmat[i][j]) + 
+								(newmat[i][j+1] - newmat[i][j]))/4; 
+					
+					if(variance > blurThreshold[map])
+					{
+						value = newmat[i][j];
+					}
+					else
+					{
+						if(bVal == 0){//dithered blur
+							value = (newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1])/4;
+						}
+						if(bVal == 1){//diamond blur
+							value = (newmat[i][j] + newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1])/5;
+						}
+						if(bVal == 2){//box blur
+							value = (newmat[i][j] + newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1] + newmat[i-1][j-1] + newmat[i+1][j-1] + newmat[i-1][j+1] + newmat[i+1][j+1])/9;
+						}
+					}
+					
+					//result
+					newmat2[i][j] = [value, value, value,255];
+
+				}
+			}
+			
+			//let diagVal = Math.sqrt((xyDir.x*xyDir.x)+(xyDir.y*xyDir.y)); 
+			//apply directional blur
+			/*
+			for(let i = 1; i <= tpHt; i++){
+				for(let j = 1; j <= tpWd; j++){
+					
+					let value = 0;
+					
+					if(xyDir.x > 0 && xyDir.y < 0){//from up left
+						
+						//value = (newmat2[i][j][0] + (newmat[i-1][j-1] * dBlurV))/2;
+						
+						value = (((newmat2[i][j][0] + (newmat[i-1][j-1] * dBlurV * (xyDir.x+xyDir.y)))/2) +
+								((newmat2[i][j][0] + (newmat[i-1][j] * dBlurV * xyDir.x))) +
+								((newmat2[i][j][0] + (newmat[i][j-1] * dBlurV * -xyDir.y))))/2.5;
+						
+					}
+					else{
+						value = newmat2[i][j][0];
+					}
+					
+					//result
+					newmat2[i][j] = [value, value, value,255];
+				}
+			}*/
+			
+			//apply curves
+			for(let i = 1; i <= tpHt; i++){
+				for(let j = 1; j <= tpWd; j++){
+					
+					let value = newmat2[i][j][0];
+					
+					if(value >= curvePivot[map]){
+						let dist = (value - curvePivot[map])/127.0;
+						value += dist*value*(curveInt[map]/8.0);
+						newmat2[i][j] = [value, value, value,255];
+					}
+					else
+					{
+						let dist = (curvePivot[map] - value)/127.0;
+						value -= dist*value*(curveInt[map]/8.0);
+						newmat2[i][j] = [value, value, value,255]
+					}
+				}
+			}
+			//transfer pixels to canvas
+			l = 0;
+			for(let i = 1; i <= tpHt; i++){
+				for(let j = 1; j <= tpWd; j++){
+
+					imgDataS.data[l] = newmat2[i][j][0];
+					imgDataS.data[l+1] = newmat2[i][j][1];
+					imgDataS.data[l+2] = newmat2[i][j][2];
+					imgDataS.data[l+3] = 255;
+					l+=4;
+				}
+			}
+		}
+		else{ //from texture
+			let colArrayTemp;
+			let parArrayTemp;
+			if(currentMap == mapN[1]){colArrayTemp = roughColors; parArrayTemp = roughSprVal;}
+			if(currentMap == mapN[2]){colArrayTemp = metalColors; parArrayTemp = metalSprVal;}
+			if(currentMap == mapN[3]){colArrayTemp = emissiveColors; parArrayTemp = emissiveSprVal;}
+			if(currentMap == mapN[0]){colArrayTemp = heightColors; parArrayTemp = heightSprVal;}
+
+			for(let i = 0; i < tpHt; i++){
+				for(let j = 0; j < tpWd; j++){
+				
+					//start with a black pixel
+					rgbmat2[i][j] = [ 0, 0, 0, 255 ];
+				
+					for(let k = 0; k < colArrayTemp.length; k++){
+						
+						//get spread and value
+						let spr = parArrayTemp[k][0];
+						let val = parArrayTemp[k][1];
+						//parse color
+						var rgb = JSON.parse(colArrayTemp[k]);
+						
+						if( rgbmat1[i][j][0] < rgb[0] + spr && rgbmat1[i][j][0] > rgb[0] - spr &&
+							rgbmat1[i][j][1] < rgb[1] + spr && rgbmat1[i][j][1] > rgb[1] - spr &&
+							rgbmat1[i][j][2] < rgb[2] + spr && rgbmat1[i][j][2] > rgb[2] - spr && currentMap != mapN[3]){
+								
+							rgbmat2[i][j] = [ val, val, val, 255 ];
+						}
+						if( rgbmat1[i][j][0] < rgb[0] + spr && rgbmat1[i][j][0] > rgb[0] - spr &&
+							rgbmat1[i][j][1] < rgb[1] + spr && rgbmat1[i][j][1] > rgb[1] - spr &&
+							rgbmat1[i][j][2] < rgb[2] + spr && rgbmat1[i][j][2] > rgb[2] - spr && currentMap == mapN[3]){
+						
+							rgbmat2[i][j] = [rgbmat1[i][j][0] * (val/255), rgbmat1[i][j][1] * (val/255), rgbmat1[i][j][2] * (val/255)];
+						}
+						
+					}
+
+				}
+			}
+			//transfer pixels to canvas
+			l = 0;
+			for(let i = 0; i < tpHt; i++){
+				for(let j = 0; j < tpWd; j++){
+
+					imgDataS.data[l] = rgbmat2[i][j][0];
+					imgDataS.data[l+1] = rgbmat2[i][j][1];
+					imgDataS.data[l+2] = rgbmat2[i][j][2];
+					imgDataS.data[l+3] = 255;
+					l+=4;
+				}
+			}
+		}
+
+		//push final img
+		pre4.putImageData(imgDataS,0,0);
+	}
+	
+	function cloneCanvas(oldCanvas){
+
+		var newCanvas = document.createElement('canvas');
+		var contextz = newCanvas.getContext('2d');
+		//set dimensions
+		newCanvas.width = oldCanvas.width;
+		newCanvas.height = oldCanvas.height;
+		//apply the old canvas to the new one
+		contextz.drawImage(oldCanvas, 0, 0);
+		//return the new canvas
+		return newCanvas;
+	}
+	
+	function transferMapImage(){
+		
+		//console.log(currentMap);
+		
+		if(currentMap == mapN[1]){//roughness
+			canvasrough.width = tpWd;
+			canvasrough.height = tpHt;
+			let cloneData = pre4.getImageData(0,0,pre4.canvas.width,pre4.canvas.height);
+			ctxrou.putImageData(cloneData,0,0);
+			updateNeeded = true;
+		}
+		if(currentMap == mapN[2]){//metalness
+			canvasmetal.width = tpWd;
+		    canvasmetal.height = tpHt;
+			let cloneData1 = pre4.getImageData(0,0,pre4.canvas.width,pre4.canvas.height);
+			ctxmet.putImageData(cloneData1,0,0);
+			updateNeeded = true;
+		}
+		if(currentMap == mapN[3]){//emissive
+			canvasemission.width = tpWd;
+		    canvasemission.height = tpHt;
+			let cloneData2 = pre4.getImageData(0,0,pre4.canvas.width,pre4.canvas.height);
+			ctxem.putImageData(cloneData2,0,0);
+			updateNeeded = true;
+		}
+		if(currentMap == mapN[0]){//height
+			canvash.width = tpWd;
+		    canvash.height = tpHt;
+			let cloneData3 = pre4.getImageData(0,0,pre4.canvas.width,pre4.canvas.height);
+			ctxh.putImageData(cloneData3,0,0);
+			result.width = tpWd + 2;
+			result.height = tpHt + 2;
+			normal.width = tpWd;
+			normal.height = tpHt;
+			canvasao.width = tpWd;
+			canvasao.height = tpHt;
+			editImage();
+			updateNeeded = true;
+		}
+
+	}
+	
+	function heightFromTexture(){
+		canvas1pre.width = tpWd;
+		canvas1pre.height = tpHt;
+		canvas2pre.width = tpWd;
+		canvas2pre.height = tpHt;
+		
+		pre1.drawImage(canvas, 0, 0);
+		
+		let imgData = pre1.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+		let imgDataS = pre1.createImageData(tpWd, tpHt);
+		let data = imgData.data;
+		
+		let pixels = [];
+		//Read image and store RGB pixels 
+		for (i = 0; i < data.length; i += 4) 
+		{                     		
+			//ensure to make it greyscale w/o transparency
+			if(imgData.data[i+3] < alphaThreshold){
+				mean = 0; //if has transparency -> black pixel
+			}
+			else{
+				//unbalanced greyscale
+				mean = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2])/3;
+				if(invertedVals[0] == true){
+					mean = 255 - mean;
+				}
+			}
+			pixels.push(Math.round(mean));
+		} 
+		
+		//make the array a matrix
+		let mat = toMatrix(pixels, tpWd);
+		
+		//create a new matrix with 1px border for tileing
+		let matplus = [];
+		for(let i = 0; i < tpHt + 2; i++){
+			let mArr = [];
+			for(let j = 0; j < tpWd + 2; j++){
+				mArr.push(255);
+			}
+			matplus.push(mArr);
+		}	
+		
+		//fill all borders for mapping the edges correctly 
+		
+		//fill 4 edges
+		matplus[0][0]   = mat[tpHt-1][tpWd-1];
+		matplus[0][tpWd+1]  = mat[tpHt-1][0];
+		matplus[tpHt+1][0]  = mat[0][tpWd-1];
+		matplus[tpHt+1][tpWd+1] = mat[0][0];
+		//fill center
+		for(let i = 1; i <= tpHt; i++){	
+			for(let j = 1; j <= tpWd; j++){
+				matplus[i][j] = mat[i-1][j-1];
+			}
+		}
+		
+		//fill top, bottom, left, right
+		if(tilingUp == 1){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[tpHt-1][i-1];//top
+				matplus[tpHt+1][i] = mat[0][i-1];//bottom	
+			}
+		}else if(tilingUp == 0){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[0][i-1];//top
+				matplus[tpHt+1][i] = mat[tpHt-1][i-1];//bottom	
+			}	
+		}else{
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = parseInt(bevelHeight);//top
+				matplus[tpHt+1][i] = parseInt(bevelHeight);//bottom	
+			}
+		}
+			
+		if(tilingLf == 1){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][tpWd-1];//left
+				matplus[i][tpWd+1] = mat[i-1][0];//right
+			}
+		}else if(tilingLf == 0){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][0];//left
+				matplus[i][tpWd+1] = mat[i-1][tpWd-1];//right
+			}
+		}else{
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = parseInt(bevelHeight);//left
+				matplus[i][tpWd+1] = parseInt(bevelHeight);//right
+			}
+		}
+
+		
+		//create a copy of the matrix
+		let newmat = JSON.parse(JSON.stringify(matplus)); //ORIGINAL texture
+		//let newmat1 = JSON.parse(JSON.stringify(matplus));
+		let newmat2 = JSON.parse(JSON.stringify(matplus)); 
+		
+		//variables for light X Y direction
+		let xyDir = { x: 0, y: 0};
+		let totalX = 0;
+		let totalY = 0;
+		// calculate light direction
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+				
+				//up
+				if( newmat[i][j-1] > newmat[i][j] ){ xyDir.y -= 1; totalY++;}
+				//down
+				if( newmat[i][j+1] > newmat[i][j] ){ xyDir.y += 1; totalY++;}
+				//left
+				if( newmat[i-1][j] > newmat[i][j] ){ xyDir.x += 1; totalX++;}
+				//right
+				if( newmat[i+1][j] > newmat[i][j] ){ xyDir.x -= 1; totalX++;}			
+			}
+		}
+		xyDir.x /= totalX;
+		xyDir.y /= totalY;
+		
+		let vecLen = Math.sqrt(xyDir.x*xyDir.x + xyDir.y*xyDir.y);
+		xyDir.x /= vecLen;
+		xyDir.y /= vecLen;
+		
+		//convert to rad and apply light direction-rotation to visual element
+		let arc = Math.atan2(xyDir.y,xyDir.x) + Math.PI/2;
+		document.getElementById("liteArrow").style.transform = "rotate("+ arc +"rad)";
+		
+		console.log(xyDir);
+
+		//apply smart blur 
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+								
+				let variance = 0;
+				let value = 0;
+				//0 - 255
+				variance = ((newmat[i-1][j] - newmat[i][j]) + 
+							(newmat[i+1][j] - newmat[i][j]) +
+							(newmat[i][j-1] - newmat[i][j]) + 
+							(newmat[i][j+1] - newmat[i][j]))/4; 
+				
+				if(variance > blurThreshold[0])
+				{
+					value = newmat[i][j];//keep pixel
+				}
+				else//blur
+				{
+					if(blurFilterValue == 0){//dithered blur
+						value = (newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1])/4;
+					}
+					if(blurFilterValue == 1){//diamond blur
+						value = (newmat[i][j] + newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1])/5;
+					}
+					if(blurFilterValue == 2){//box blur
+						value = (newmat[i][j] + newmat[i-1][j] + newmat[i+1][j] + newmat[i][j-1] + newmat[i][j+1] + newmat[i-1][j-1] + newmat[i+1][j-1] + newmat[i-1][j+1] + newmat[i+1][j+1])/9;
+					}
+				}
+				
+				//result
+				newmat2[i][j] = [value, value, value,255];
+
+			}
+		}
+		
+		let diagVal = Math.sqrt((xyDir.x*xyDir.x)+(xyDir.y*xyDir.y)); 
+		
+		//apply directional blur
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+				
+				let value = 0;
+				
+				if(xyDir.x > 0 && xyDir.y < 0 && newmat[i-1][j-1] > dBlurThreshold && newmat[i-1][j] > dBlurThreshold && newmat[i][j-1] > dBlurThreshold){ //top left
+					
+					value = (newmat2[i][j][0] + (((newmat[i-1][j-1] * dBlurV * diagVal) +
+							(newmat[i-1][j] * dBlurV * 2*xyDir.x) + 
+							(newmat[i][j-1] * dBlurV * -2*xyDir.y))/diagVal))/10;
+							
+				}
+				else if(xyDir.x < 0 && xyDir.y < 0 && newmat[i+1][j-1] > dBlurThreshold && newmat[i+1][j] > dBlurThreshold && newmat[i][j-1] > dBlurThreshold){ //top right
+					
+					value = (newmat2[i][j][0] + (((newmat[i+1][j-1] * dBlurV * diagVal) +
+							(newmat[i+1][j] * dBlurV * -2*xyDir.x) + 
+							(newmat[i][j-1] * dBlurV * -2*xyDir.y))/diagVal))/10;
+							
+				}
+				else if(xyDir.x > 0 && xyDir.y > 0 && newmat[i-1][j+1] > dBlurThreshold && newmat[i-1][j] > dBlurThreshold && newmat[i][j+1] > dBlurThreshold){ //bot left
+					
+					value = (newmat2[i][j][0] + (((newmat[i-1][j+1] * dBlurV * diagVal) +
+							(newmat[i-1][j] * dBlurV * 2*xyDir.x) + 
+							(newmat[i][j+1] * dBlurV * 2*xyDir.y))/diagVal))/10;
+							
+				}
+				else if(xyDir.x < 0 && xyDir.y > 0 && newmat[i+1][j+1] > dBlurThreshold && newmat[i+1][j] > dBlurThreshold && newmat[i][j+1] > dBlurThreshold){ //bot right
+					
+					value = (newmat2[i][j][0] + (((newmat[i+1][j+1] * dBlurV * diagVal) +
+							(newmat[i+1][j] * dBlurV * -2*xyDir.x) + 
+							(newmat[i][j+1] * dBlurV * 2*xyDir.y))/diagVal))/10;
+							
+				}
+				else{
+					value = newmat2[i][j][0];
+				}
+				
+				//result
+				newmat2[i][j] = [value, value, value,255];
+			}
+		}
+		
+		//apply curves
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+				
+				let value = newmat2[i][j][0];
+				
+				if(value >= curvePivot[0]){
+					let dist = (value - curvePivot[0])/127.0;
+					value += dist*dist*value*(curveInt[0]/8.0);
+					newmat2[i][j] = [value, value, value,255];
+				}
+				else
+				{
+					let dist = (curvePivot[0] - value)/127.0;
+					value -= dist*dist*value*(curveInt[0]/8.0);
+					newmat2[i][j] = [value, value, value,255]
+				}
+			}
+		}
+		
+			
+		l = 0;
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+
+				imgDataS.data[l] = newmat2[i][j][0];
+				imgDataS.data[l+1] = newmat2[i][j][1];
+				imgDataS.data[l+2] = newmat2[i][j][2];
+				imgDataS.data[l+3] = 255;
+				l+=4;
+			}
+		}
+		pre2.putImageData(imgDataS,0,0);
+	}
+	
+	function transferHeightImage(){
+		canvash.width = tpWd;
+		canvash.height = tpHt;
+		result.width = tpWd + 2;
+		result.height = tpHt + 2;
+		normal.width = tpWd;
+		normal.height = tpHt;
+		canvasao.width = tpWd;
+		canvasao.height = tpHt;
+		ctxh.drawImage(canvas2pre,0,0);
+		editImage();
+	}
+	
+	
+	function previewFile(f)//called when a height map is imported
+	{
+		let file = null;
+		
+		if(f == null){
+			file = document.getElementById("heightinput").files[0];
+		}
+		else{
+			file = f;
+		}
+		let reader = new FileReader();
+
+		reader.onloadend = function () {
+			
+			img.src = reader.result;
+			
+			img.onload = function(){
+				
+				canvash.width = img.naturalWidth;
+				canvash.height = img.naturalHeight;
+				tpWd = img.naturalWidth;
+				tpHt = img.naturalHeight;
+				//canvas for result
+				result.width = tpWd + 2;
+				result.height = tpHt + 2;
+				normal.width = tpWd;
+				normal.height = tpHt;
+				canvasao.width = tpWd;
+			    canvasao.height = tpHt;
+				ctxh.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+				editImage();
+			}
+		}
+
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			//preview.src = "";
+		}	
+    }
+	
+	function toMatrix(arr, width){
+	    return arr.reduce(function (rows, key, index) { 
+		    return (index % width == 0 ? rows.push([key]) : rows[rows.length-1].push(key)) && rows;
+	    }, []);
+	}
+	
+	function editImage(){
+	
+		let imgData = ctxh.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+		let imgDataS = ctxres.createImageData(tpWd + 2, tpHt + 2);
+		let imgDataN = ctxres.createImageData(tpWd, tpHt);
+		//console.log(imgDataS);
+		let data = imgData.data;
+		
+				  
+		let pixels = [];
+		//Read image and store RGB pixels 
+		for (i = 0; i < data.length; i += 4) 
+		{                     		
+			//ensure to make it greyscale w/o transparency
+			if(imgData.data[i+3] < alphaThreshold){
+				mean = 0; //if has transparency -> black pixel
+			}
+			else{
+				//unbalanced greyscale
+				mean = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2])/3;
+			}
+			pixels.push(Math.round(mean));
+		} 
+		
+		//make the array a matrix
+		let mat = toMatrix(pixels, tpWd);
+		
+		//create a new matrix with 1px border for tileing
+		let matplus = [];
+		for(let i = 0; i < tpHt + 2; i++){
+			let mArr = [];
+			for(let j = 0; j < tpWd + 2; j++){
+				mArr.push(255);
+			}
+			matplus.push(mArr);
+		}	
+
+		//fill all borders for mapping the edges correctly 
+		
+		//fill 4 edges
+		matplus[0][0]   = mat[tpHt-1][tpWd-1];
+		matplus[0][tpWd+1]  = mat[tpHt-1][0];
+		matplus[tpHt+1][0]  = mat[0][tpWd-1];
+		matplus[tpHt+1][tpWd+1] = mat[0][0];
+		//fill center
+		for(let i = 1; i <= tpHt; i++){	
+			for(let j = 1; j <= tpWd; j++){
+				matplus[i][j] = mat[i-1][j-1];
+			}
+		}
+		
+		//fill top, bottom, left, right
+		if(tilingUp == 1){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[tpHt-1][i-1];//top
+				matplus[tpHt+1][i] = mat[0][i-1];//bottom	
+			}
+		}else if(tilingUp == 0){
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = mat[0][i-1];//top
+				matplus[tpHt+1][i] = mat[tpHt-1][i-1];//bottom	
+			}	
+		}else{
+			for(let i = 1; i <= tpWd; i++){
+				matplus[0][i] = parseInt(bevelHeight);//top
+				matplus[tpHt+1][i] = parseInt(bevelHeight);//bottom	
+			}
+		}
+			
+		if(tilingLf == 1){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][tpWd-1];//left
+				matplus[i][tpWd+1] = mat[i-1][0];//right
+			}
+		}else if(tilingLf == 0){
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = mat[i-1][0];//left
+				matplus[i][tpWd+1] = mat[i-1][tpWd-1];//right
+			}
+		}else{
+			for(let i = 1; i <= tpHt; i++){
+				matplus[i][0] = parseInt(bevelHeight);//left
+				matplus[i][tpWd+1] = parseInt(bevelHeight);//right
+			}
+		}
+		
+		//create a copy of the matrix
+		let newmat = JSON.parse(JSON.stringify(matplus)); //ORIGINAL HEIGHTMAP
+		let newmat2 = JSON.parse(JSON.stringify(matplus)); //NORMALMAP
+		let newmat3 = JSON.parse(JSON.stringify(matplus)); //AOMAP
+		
+		//calculate NORMAL MAP ////////////////////////////////////////////////
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+				
+				//calculate R G B values based on B&W neighbours
+				let green, red;
+				
+				// diamond shaped kernel
+				if(normalFilterValue == 0){
+					//green  = (-newmat[i-1][j]/2) + 127 + (newmat[i+1][j]/2);
+					//red  = (-newmat[i][j+1]/2) + 127 + (newmat[i][j-1]/2);
+					green  = (-newmat[i-1][j]) + (newmat[i+1][j]);
+					red  = (-newmat[i][j+1]) + (newmat[i][j-1]);
+				}
+				// octogon sharp/hard kernel
+				if(normalFilterValue == 1){
+				    //green  = (-newmat[i-1][j]/3) + 127 + (newmat[i+1][j]/3) + (-newmat[i-1][j-1]/12) + (-newmat[i-1][j+1]/12) + (newmat[i+1][j-1]/12) + (newmat[i+1][j+1]/12);
+				    //red  = -(newmat[i][j+1]/3) + 127 + (newmat[i][j-1]/3) + (-newmat[i-1][j-1]/12) + (-newmat[i-1][j+1]/12) + (newmat[i+1][j-1]/12) + (newmat[i+1][j+1]/12);
+					green  = (-newmat[i-1][j]/1.5) + (newmat[i+1][j]/1.5) + (-newmat[i-1][j-1]/6) + (-newmat[i-1][j+1]/6) + (newmat[i+1][j-1]/6) + (newmat[i+1][j+1]/6);
+				    red  = -(newmat[i][j+1]/1.5) + (newmat[i][j-1]/1.5) + (-newmat[i-1][j-1]/6) + (-newmat[i-1][j+1]/6) + (newmat[i+1][j-1]/6) + (newmat[i+1][j+1]/6);
+				}
+				// octogon blurry kernel
+				if(normalFilterValue == 2){
+					//green  = (-newmat[i-1][j]/4) + 127 + (newmat[i+1][j]/4) + (-newmat[i-1][j-1]/8) + (-newmat[i-1][j+1]/8) + (newmat[i+1][j-1]/8) + (newmat[i+1][j+1]/8);
+				    //red  = -(newmat[i][j+1]/4) + 127 + (newmat[i][j-1]/4) + (-newmat[i-1][j-1]/8) + (-newmat[i-1][j+1]/8) + (newmat[i+1][j-1]/8) + (newmat[i+1][j+1]/8);
+					green  = (-newmat[i-1][j]/2) + (newmat[i+1][j]/2) + (-newmat[i-1][j-1]/4) + (-newmat[i-1][j+1]/4) + (newmat[i+1][j-1]/4) + (newmat[i+1][j+1]/4);
+				    red  = (-newmat[i][j+1]/2) + (newmat[i][j-1]/2) + (-newmat[i-1][j-1]/4) + (-newmat[i-1][j+1]/4) + (newmat[i+1][j-1]/4) + (newmat[i+1][j+1]/4);
+				}
+				// circle blurry kernel
+				if(normalFilterValue == 3){
+
+					//green  = (-newmat[i-1][j]/4) + (newmat[i+1][j]/4) + (-newmat[i-1][j-1]/4) + (-newmat[i-1][j+1]/4) + (newmat[i+1][j-1]/4) + (newmat[i+1][j+1]/4);
+				    //red  = -(newmat[i][j+1]/4) + (newmat[i][j-1]/4) + (-newmat[i-1][j-1]/4) + (-newmat[i-1][j+1]/4) + (newmat[i+1][j-1]/4) + (newmat[i+1][j+1]/4);
+					
+					//cross test
+					green  = (-newmat[i-1][j+1]/2) + (newmat[i+1][j+1]/2) + (-newmat[i-1][j-1]/2) + (newmat[i+1][j-1]/2);
+					red  = (-newmat[i+1][j+1]/2) + (newmat[i+1][j-1]/2) + (-newmat[i-1][j+1]/2) + (newmat[i-1][j-1]/2);
+					
+					green += (-newmat[i-1][j]) + (newmat[i+1][j]);
+					red += (-newmat[i][j+1]) + (newmat[i][j-1]);
+					
+					green /= 2;
+					red /= 2;
+				}
+				
+				//-255 to 255
+				
+				if((green > normalLowLimit && green < 0) || (green < normalUpLimit && green > 0)){
+					green = 0;
+				}
+				if((red > normalLowLimit && red < 0) || (red < normalUpLimit && red > 0)){
+					red = 0;
+				}
+				
+				//let blue = 255-((red-127)+(green-127));
+				//blue = (blue*(255-normalIntensity) + 255*normalIntensity)/255;
+				//green = (green*(255-normalIntensity) + 127*normalIntensity)/255;
+				//red = (red*(255-normalIntensity) + 127*normalIntensity)/255;
+				
+				green *= normalIntensity/127;
+				red *= normalIntensity/127;
+				
+				//normalization method
+				let a = new THREE.Vector3( red, green, 255 );
+				a.normalize();
+				a.multiplyScalar(0.5);
+				a.addScalar(0.5);
+				a.multiplyScalar(255);
+				newmat2[i][j] = [a.x,a.y,a.z,255];
+				
+				
+				//result
+				//newmat2[i][j] = [red,green,blue,255];
+
+			}
+		}
+		
+		//calculate AO MAP ////////////////////////////////////////////////
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+				
+				//calculate R G B values based on B&W neighbours
+				let shadow = 255;
+				
+				// diamond shaped kernel
+				if(aoFilterValue == 0){
+				    if(newmat[i-1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j]-newmat[i][j])/4; } 
+					if(newmat[i+1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j]-newmat[i][j])/4; } 
+					if(newmat[i][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j-1]-newmat[i][j])/4; } 
+					if(newmat[i][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j+1]-newmat[i][j])/4; } 
+				}
+				// octogon sharp/hard kernel
+				if(aoFilterValue == 1){
+					if(newmat[i-1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j]-newmat[i][j])/5; } 
+					if(newmat[i+1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j]-newmat[i][j])/5; } 
+					if(newmat[i][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j-1]-newmat[i][j])/5; } 
+					if(newmat[i][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j+1]-newmat[i][j])/5; } 
+					if(newmat[i-1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j-1]-newmat[i][j])/20; } 
+					if(newmat[i-1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j+1]-newmat[i][j])/20; } 
+					if(newmat[i+1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j-1]-newmat[i][j])/20; } 
+					if(newmat[i+1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j+1]-newmat[i][j])/20; }
+				}
+				// octogon blurry kernel
+				if(aoFilterValue == 2){
+					if(newmat[i-1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j]-newmat[i][j])/6; } 
+					if(newmat[i+1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j]-newmat[i][j])/6; } 
+					if(newmat[i][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j-1]-newmat[i][j])/6; } 
+					if(newmat[i][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j+1]-newmat[i][j])/6; } 
+					if(newmat[i-1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j-1]-newmat[i][j])/12; } 
+					if(newmat[i-1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j+1]-newmat[i][j])/12; } 
+					if(newmat[i+1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j-1]-newmat[i][j])/12; } 
+					if(newmat[i+1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j+1]-newmat[i][j])/12; }
+				}
+				// circle blurry kernel
+				if(aoFilterValue == 3){	
+					if(newmat[i-1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j]-newmat[i][j])/8; } 
+					if(newmat[i+1][j] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j]-newmat[i][j])/8; } 
+					if(newmat[i][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j-1]-newmat[i][j])/8; } 
+					if(newmat[i][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i][j+1]-newmat[i][j])/8; } 
+					if(newmat[i-1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j-1]-newmat[i][j])/8; } 
+					if(newmat[i-1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i-1][j+1]-newmat[i][j])/8; } 
+					if(newmat[i+1][j-1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j-1]-newmat[i][j])/8; } 
+					if(newmat[i+1][j+1] > newmat[i][j]){ shadow -= aoIntensity*(newmat[i+1][j+1]-newmat[i][j])/8; }
+				}
+
+				//result
+				newmat3[i][j] = [shadow,shadow,shadow,255]
+
+			}
+		}
+
+		//DRAW CANVASES//
+		//draw expanded tile TILED | STRETCHED | L & R | U & D
+		var l = 0;
+		for(let i = 0; i < tpHt + 2; i++){
+			for(let j = 0; j < tpWd + 2; j++){
+
+				imgDataS.data[l] = matplus[i][j];
+				imgDataS.data[l+1] = matplus[i][j];
+				imgDataS.data[l+2] = matplus[i][j]; 
+				imgDataS.data[l+3] = 255; 
+				
+				l+=4;
+			}
+		}
+		ctxres.putImageData(imgDataS, 0, 0);
+		
+		//draw normal	
+		l = 0;
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+
+				imgDataN.data[l] = newmat2[i][j][0];
+				imgDataN.data[l+1] = newmat2[i][j][1];
+				imgDataN.data[l+2] = newmat2[i][j][2];
+				imgDataN.data[l+3] = newmat2[i][j][3];
+				l+=4;
+			}
+		}
+		ctxnor.putImageData(imgDataN,0,0);
+		
+		//draw ao	
+		l = 0;
+		for(let i = 1; i <= tpHt; i++){
+			for(let j = 1; j <= tpWd; j++){
+
+				imgDataN.data[l] = newmat3[i][j][0];
+				imgDataN.data[l+1] = newmat3[i][j][1];
+				imgDataN.data[l+2] = newmat3[i][j][2];
+				imgDataN.data[l+3] = newmat3[i][j][3];
+				l+=4;
+			}
+		}
+		ctxao.putImageData(imgDataN,0,0);
+
+		updateNeeded = true;
+	}
+	
+	//RME map
+	//R = 0, G = 1, B = 2, A = 3 
+	//radio buttons Roughness for RME
+	let rme0 = document.getElementById("rgba-r").children;
+	let rmaRoughness = 3;	
+	for (let i = 0; i < rme0.length; i++) {
+		rme0[i].addEventListener('change', function(){
+			if(this.value !== rmaRoughness){rmaRoughness = parseInt(this.value);}
+		});
+	}
+	let rme1 = document.getElementById("rgba-m").children;
+	let rmaMetalness = 2;	
+	for (let i = 0; i < rme1.length; i++) {
+		rme1[i].addEventListener('change', function(){
+			if(this.value !== rmaMetalness){rmaMetalness = parseInt(this.value);}
+		});
+	}
+	let rme2 = document.getElementById("rgba-e").children;
+	let rmaEmission = 1;	
+	for (let i = 0; i < rme2.length; i++) {
+		rme2[i].addEventListener('change', function(){
+			if(this.value !== rmaEmission){rmaEmission = parseInt(this.value);}
+		});
+	}
+	let rme3 = document.getElementById("rgba-ao").children;
+	let rmaAO = 0;	
+	for (let i = 0; i < rme3.length; i++) {
+		rme3[i].addEventListener('change', function(){
+			if(this.value !== rmaAO){rmaAO = parseInt(this.value);}
+		});
+	}
+	
+	function hasDuplicates(arr){
+		return (new Set(arr)).size !== arr.length;
+	}
+	
+	//RME Canvas
+	let canvasRME = document.getElementById("canvasRME");
+	let ctxRME = canvasRME.getContext('2d');
+	
+	function genRME(){
+		
+		let vals = [rmaRoughness, rmaMetalness, rmaEmission, rmaAO];
+		if(hasDuplicates(vals)){ alert("Ensure each checkbox occupies a different color (RGBA). Overrides may happen."); }
+		
+		try{
+			
+			canvasRME.width = tpWd;
+			canvasRME.height= tpHt;
+			
+			//create an image to the canvas
+			let imgDataRME = ctxRME.createImageData(tpWd, tpHt);
+
+			let imgDataR = ctxrou.getImageData(0,0,tpWd,tpHt);
+			let imgDataM = ctxmet.getImageData(0,0,tpWd,tpHt);
+			let imgDataE = ctxem.getImageData(0,0,tpWd,tpHt);
+			let imgDataA = ctxao.getImageData(0,0,tpWd,tpHt);
+		
+			let dataR = imgDataR.data;
+			let dataM = imgDataM.data;
+			let dataE = imgDataE.data;
+			let dataA = imgDataA.data;
+			
+			//Read images and store RGBA pixels 
+			for (let i = 0; i < dataR.length; i += 4) 
+			{                     		
+				//roughness 
+				imgDataRME.data[i+vals[0]] = dataR[i];
+				
+				imgDataRME.data[i+vals[1]] = dataM[i];
+				imgDataRME.data[i+vals[2]] = dataE[i];
+				imgDataRME.data[i+vals[3]] = dataA[i];
+			} 
+
+			ctxRME.putImageData(imgDataRME,0,0);
+			
+			//make download available
+			let bt = document.getElementById("rmeDownloadBtn");
+			bt.download = "rme.png";
+			bt.href = canvasRME.toDataURL("image/png;base64");
+		}
+		catch(err){
+			console.log(err);
+		}
+		
+	}
+	////////THREE JS/////////
+
+	let scene = new THREE.Scene();
+	let camera = new THREE.PerspectiveCamera( 35, container.clientWidth / container.clientHeight, 0.1, 1000 );
+	camera.position.z = 2.8;
+	camera.position.y = 0.0;
+	//camera.rotation.x = -0.1;
+
+	let renderer = new THREE.WebGLRenderer( {alpha: true} );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMapSoft = true;
+
+	renderer.shadowMapBias = 0.001;
+	renderer.shadowMapDarkness = 0.5;
+	renderer.shadowMapWidth = 1024;
+	renderer.shadowMapHeight = 1024;
+	//renderer.setClearColor( 0x55ddff, 0 );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( container.clientWidth, container.clientHeight );
+	container.appendChild( renderer.domElement );
+	container.children[0].style.borderRadius = "2vh";
+	
+	//add plane
+	let geometryp = new THREE.PlaneGeometry( 2, 3, 3 );
+	let materialp = new THREE.MeshStandardMaterial( );
+	let cubep = new THREE.Mesh( geometryp, materialp );
+	cubep.position.y = -0.71; //-0.51
+	cubep.rotation.x = -1.57;
+	cubep.receiveShadow = true;
+	scene.add( cubep );
+	
+
+	let geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	//console.log(geometry);
+	geometry.faceVertexUvs[ 1 ] = geometry.faceVertexUvs[ 0 ];
+	let material = new THREE.MeshStandardMaterial( );
+	let cube = new THREE.Mesh( geometry, material );
+	cube.receiveShadow = true;
+	cube.castShadow = true;
+	scene.add( cube );
+	
+	let fLight = new THREE.PointLight( 0xffffff, 0.5, 500, 0.8 );
+	fLight.position.set( 0.2, 0.25, 1.7 );
+	fLight.castShadow = true;
+	scene.add( fLight );
+	
+	let globalLight = new THREE.AmbientLight(0xffffff, 0.2);
+	scene.add(globalLight);
+		
+	//add BG plane
+	let geometryk = new THREE.PlaneGeometry( 5, 3, 3 );
+	const materialk = new THREE.MeshBasicMaterial();
+	let cubek = new THREE.Mesh( geometryk, materialk );
+	cubek.position.y = 0; //-0.51
+	cubek.position.z = -1;
+	cubek.rotation.x = 0;
+	cubek.receiveShadow = true;
+	scene.add( cubek );
+
+	let rotSpd = 400;
+	
+	function updateAmbientInt(val){ globalLight.intensity = val; }
+	function updatePointInt(val)  { fLight.intensity = val; }
+	function updateRotInt(val)    { rotSpd = val; }
+	
+	let counter = 0;
+	
+	
+	function changeEnvironmentMap(){
+		
+		console.log("changed");
+		//env map
+		const textureLoader = new THREE.CubeTextureLoader();
+		textureLoader.crossOrigin = "Anonymous";
+
+		let rand = Math.floor(Math.random() * 1000);
+		
+		let envMapLink = "https://picsum.photos/seed/"+rand+"/512/512";
+
+		//let envMapLink = "https://picsum.photos/512/512";
+		myEnvMap = textureLoader.load([envMapLink, envMapLink, envMapLink, envMapLink, envMapLink, envMapLink]);
+		
+		//plane texture
+		const loader = new THREE.TextureLoader();
+		loader.load( envMapLink,
+			function ( texture ) {
+				cubek.material.map = texture;
+				cubek.material.needsUpdate = true;
+			},
+			undefined,
+			function ( err ) {
+				console.error( 'Texture failed to load' );
+			}
+		);
+		
+		cube.material.envMap = myEnvMap;
+		cube.material.needsUpdate = true;
+	}
+	
+	changeEnvironmentMap();
+	
+	//normal map
+	let normalMapImage, mainTexture, aoMap, emissionMap, roughnessMap, metalnessMap, alphaTexture;
+	
+	function render() {
+		
+	    counter++;
+		
+		if(updateNeeded){
+			//maintex
+			mainTexture = new THREE.CanvasTexture(canvas);
+			mainTexture.magFilter = THREE.NearestFilter;
+			mainTexture.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.map = mainTexture;
+			
+			//transparency
+			cube.material.transparent = true;
+			alphaTexture = new THREE.CanvasTexture(alphaMapCanvas);
+			alphaTexture.magFilter = THREE.NearestFilter;
+			alphaTexture.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.alphaMap = alphaTexture;
+			
+			//normaltex
+			normalMapImage = new THREE.CanvasTexture(normal);
+			normalMapImage.magFilter = THREE.NearestFilter;
+			normalMapImage.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.normalMapType = 0;
+			cube.material.normalMap = normalMapImage;
+			cube.material.normalScale = new THREE.Vector2( 1, 1 );
+			
+			//aotex
+			aoMap = new THREE.CanvasTexture(canvasao);
+			aoMap.magFilter = THREE.NearestFilter;
+			aoMap.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.aoMap = aoMap;
+			
+			//emissiontex
+			emissionMap = new THREE.CanvasTexture(canvasemission);
+			emissionMap.magFilter = THREE.NearestFilter;
+			emissionMap.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.emissive = new THREE.Color( 0xffffff );
+			cube.material.emissiveMap = emissionMap;
+			cube.material.emissiveIntensity = 2; //make it visually stronger!
+			
+			//roughnesstex
+			roughnessMap = new THREE.CanvasTexture(canvasrough);
+			roughnessMap.magFilter = THREE.NearestFilter;
+			roughnessMap.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.roughness = 1;
+			cube.material.roughnessMap = roughnessMap;
+			
+			//metaltex
+			metalnessMap = new THREE.CanvasTexture(canvasmetal);
+			metalnessMap.magFilter = THREE.NearestFilter;
+			metalnessMap.minFilter = THREE.LinearMipMapLinearFilter;
+			cube.material.metalness = 1;
+			cube.material.metalnessMap = metalnessMap;
+			
+			//environment map
+			cube.material.envMap = myEnvMap;
+			cube.material.needsUpdate = true;
+			
+			updateNeeded = false;
+		}
+		
+		
+		renderer.render( scene, camera );
+
+		cube.rotation.y = 2*Math.sin(counter/rotSpd);
+		cube.rotation.z = -1*Math.sin(counter/rotSpd);
+
+
+		requestAnimationFrame(render);
+	}
+	window.requestAnimationFrame(render);
+	//render();
+	
+	
+
+	
+}	
+</script>
+
+
+</body>
+
+</html>
