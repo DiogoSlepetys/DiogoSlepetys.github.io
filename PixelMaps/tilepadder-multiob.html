@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Pix Tool">
+    <meta name="author" content="Diogo Slepetys">
+	
+	<link rel="icon" type="image/png" href="favicon.gif"/>
+	
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+	
+	<style>
+		h4{ font-family: arial; color: #eee; }
+		h1{ color: #eee; font-size: 2em; }
+		h3{ text-align: center; color: #ccc; font-size: 0.8em; margin-top: 0.3vh; margin-bottom: 0.3vh;}
+		h5{ text-align: center; color: #ccc; font-size: 0.8em; margin-top: 1vh; margin-bottom: 0.5vh;}
+		
+		[type="file"] {
+			display: block;
+			border: 0;
+			clip: rect(0, 0, 0, 0);
+			height: 1px;
+			overflow: hidden;
+			padding: 0;
+			position: absolute !important;
+			white-space: nowrap;
+			width: 1px;
+		}
+	
+		[type="file"] + label {
+			margin: auto;
+			display: block;
+			width: 20vw;
+			height: 3vh;
+			border-radius: 6px 6px 0px 0px;
+			background-color: #ccc;
+			text-align: center;
+			cursor: pointer;
+			font-size: calc(0.4em + 0.3vw);
+			border-bottom: 2px solid #1076a4; 
+		}
+		
+		[type="file"]:hover  + label {
+			background-color: #666;
+			color: white;
+		}
+		
+		input{
+			background-color: #222;
+			color: #999;
+			border-radius: 5px;
+			margin-left: 1vh;
+		}
+		
+		button{
+			margin: auto;
+			display: block;
+			width: 7.5vw;
+			min-height: 2vh;
+			border: none;
+			border-top: 2px solid #1076a4;
+			font-size: calc(0.3em + 0.3vw + 0.2vh);
+			background-color: #ccc;
+			cursor: pointer;
+		}
+		button:hover{
+			background-color: #666;
+			color: white;
+		}
+		
+		.checkerBG{
+			background-image: linear-gradient(0deg, #444 25%, transparent 25%), linear-gradient(-90deg, #444 25%, transparent 25%), linear-gradient(0deg, transparent 75%, #444 75%), linear-gradient(-90deg, transparent 75%, #444 75%); background-size: 0.47vw 0.47vw;
+		}
+		
+		::-webkit-scrollbar{
+			width: 9px;
+			height: 9px;
+		}
+		::-webkit-scrollbar-thumb{
+			background: #9C9C9C;
+			border-radius: 0px;
+		}
+		::-webkit-scrollbar-thumb:hover{
+			background: #2A9BD4;
+		}
+		::-webkit-scrollbar-track{
+			background: #000000;
+			border-radius: 0px;
+			box-shadow: inset 0px 0px 0px 0px #F0F0F0;
+		}
+	</style>
+	
+    <title>TilePadder</title>
+	
+</head>
+
+<body id="page-top" style="margin: 0; overflow-y: scroll; background-color: #000509; font-family: 'Press Start 2P', cursive; user-select: none;" >
+
+	<!--sidebar {-->
+	<div style="position: fixed; width: 15vw; height: 100vh; left: 0; top: 0; display: block; background-color: #000;">
+		
+		<ul style="padding: 0; margin: 0;">
+			
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><h1 style="text-align:center; margin: 1vw;">Pixel Padder</h1></li>
+			
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><div id="tileBtn" onclick="showUVPadder(false)" style="display: block; width: 98%; height: 4vh; float: right; background-color: #2196F3; border-radius: 20px 0px 0px 20px; text-align: center; cursor: pointer;"><br>Tileset Slicing</div></li>
+			<li><div style="height: 3vh; display: block;"></div></li>
+			<li><div id="pixMapsBtn" onclick="window.open('https://diogoslepetys.github.io/PixelMaps/pix2normal', '_blank')" style="display: block; width: 98%; height: 4vh; float: right; background-color: #333; border-radius: 20px 0px 0px 20px; text-align: center; cursor: pointer;"><br>Pixel Maps</div></li>
+			<li><div style="height: 5vh; display: block;"></div></li>
+			
+			<li><h3>Like this tool?</h3></li>
+			<li><div style="height: 2vh; display: block;"></div></li>
+			<li><a href='https://ko-fi.com/K3K244QH8' target='_blank'><img height='36' style='border:0px;height:36px; display: block; margin: 0 auto;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a></li>
+			
+			<li><div style="height: 6vh; display: block;"></div></li>
+			<li><h3 style="font-size: 1.3vw;">Also...</h3></li>
+			<li><div style="height: 6vh; display: block;"></div></li>
+			<li><h3>Check those guys out:</h3></li>
+			<li><a style="color:#2196F3; font-size: calc(0.4vw + 6px); display:block; margin: 3vh 0 0 0; text-align:center" href="https://jeiel.itch.io/sprytile">Sprytile <br><br> 3D Tilemaps</a></li>
+			<li><a style="color:#2196F3; font-size: calc(0.4vw + 6px); display:block; margin: 3vh 0 0 0; text-align:center" href="https://threejs.org/">Three.js <br><br> 3D Js Library</a></li>
+			
+			<li><div style="height: 22vh; display: block;"></div></li>
+			<li><h3>Brazil - 2023</h3></li>
+			
+		</ul>
+		
+	</div>
+	<!--sidebar end }-->
+		 
+	<!--main area-->
+	<div style="position: fixed; width: 84vw; height: 100vh; right: 0; top: 0; display: block; background-color: #222;">
+		
+		<div style="height: 3vh; width: 100%; text-align: center; color: #ccc;"><marquee id="marqueeTop" style="margin-top: 0.6vh;">A pixel-art specialized tool for slicing tilesets and adding UV offsets to 3D geometry!</marquee></div>
+	
+		<div style="display: grid; grid-template-columns: 0.5fr 1fr; align-items: center; justify-items: center; height: 96vh; background-color: #333">
+			<div style="padding: 10px">
+			
+				<div style="background-color: #222; border-radius: 2vh;">
+					<input id="texinput" type="file" onchange="addTexture()"></input>
+					<label for="texinput" style="line-height: 25px">📥 Upload or Paste Tileset</label>
+					<div style="display: block; background-color: #111; border-radius: 2vh;" onpaste="pasteTexture(event,0)" contenteditable="true">
+						<input style=" display: block; width: 0; height: 0; margin: 0; padding: 0; border: none"></input><!--small hack for clipboard paste-->
+						<canvas id="canvas" onpaste="pasteTexture(event,0)" contenteditable="true" class="checkerBG" style="position: relative; width: 10vw; height: 10vw; image-rendering: pixelated; margin:auto; display: block;"></canvas>
+					</div>	
+				</div>
+				
+				<div style="border: 4px dashed #444; padding: 1vh; border-radius: 2vh; margin-top: 2vh;">
+					<h5 class="less-mtop" style="grid-area: title"> - Image Info - </h5>
+					<p id="imginfo"> . . . </p>
+				</div>
+				
+				<div style="border: 4px dashed #444; padding: 1vh; border-radius: 2vh; display: grid; margin-top: 2vh; grid-template: 'title title' 'tw th' 'margin fill' 'btns fill'; ">
+					
+					<h5 class="less-mtop" style="grid-area: title"> - Settings - </h5>
+					
+					<div style="grid-area: tw">
+						<h5 class="less-mtop"> Tile Width: </h5>
+						<input id="tile_width" type="number" value="16"></input>
+					</div>
+					
+					<div style="grid-area: th">
+						<h5 class="less-mtop"> Tile Height: </h5>
+						<input id="tile_height" type="number" value="16"></input>
+					</div>
+					
+					<div style="grid-area: margin">
+						<h5 class="less-mtop"> Margin: </h5>
+						<input id="margin" type="number" value="1"></input>
+					</div>
+					
+					<div style="grid-area: fill">
+						<fieldset id="radio-fill" style="display: flex; flex-direction: column;margin: 10px; border: 2px dashed; padding: 5px;">
+							
+							<h5 class="less-mtop" style="grid-area: title"> - Fill - </h5>
+						
+							<div style="display: inline-flex">
+								<input type="radio" name="rgbar" id="r1" value="0">
+								<h5 class="less-mtop">Color:</h5>
+								<input id="color-fill" type="color"></input>
+							</div>
+							
+							<div style="display: inline-flex">
+								<input type="radio" name="rgbar" id="r4" value="1" checked="checked">
+								<h5 class="less-mtop">Alpha</h5>
+							</div>
+							
+							<div style="display: inline-flex">
+								<input type="radio" name="rgbar" id="r4" value="2">
+								<h5 class="less-mtop">Clamp</h5>
+							</div>
+							
+						</fieldset>
+					</div>
+					
+					<div style="grid-area: btns">
+						<button style="margin-top: 20px; margin-bot: 20px" onclick="generateTileset()">Generate</button>
+						<a style="color: #2196F3; font-size: calc(0.4vw + 6px); display: block; margin: 1vh 0 0 0; text-align: center; cursor: pointer" id="download">DOWNLOAD</a>
+					</div>
+				</div>
+				
+				<!-- UV Stuff -->
+				
+				<div style="border: 4px dashed #444; padding: 1vh; border-radius: 2vh; margin-top: 2vh;">
+					<h5 class="less-mtop" style="grid-area: title"> - UV Settings - </h5>
+					<input id="uvinput" type="file" onchange="addUV()"></input>
+					<label for="uvinput" style="line-height: 25px">📥 Upload .obj</label>
+					<p id="uvinfo"> . . . </p>
+					<button style="margin-top: 20px; margin-bot: 20px" onclick="recalculateUV()">Recalculate</button>
+				</div>
+				
+			</div>
+			
+			<!--Result tileset and download-->
+			<div style="width: 100%; height: 100%; background-color: #111; display: flex; align-items: center; justify-content: center;">
+				<div id="overlay" style="position: relative;">
+					<canvas id="canvash" class="checkerBG" style="width: 45vw; height: 45vw; max-height: 80vw">
+					
+					</canvas>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+
+<script>
+	
+	// get image
+	// use tilesize input
+	//click generate to gen a bigger image with the 1px margins
+	
+	let uvPadderButton = document.getElementById("uvPadderBtn");
+	let tilesetButton = document.getElementById("tileBtn");
+	
+	let canvas = document.getElementById("canvas");//texture/color map
+	let ctx = canvas.getContext('2d');
+	let canvash = document.getElementById("canvash");//height map
+	let ctxh = canvash.getContext('2d');
+	
+	let imginfo = document.getElementById("imginfo");
+	let uvinfo = document.getElementById("uvinfo");
+	
+	let img = document.createElement("img");
+	let tpWd = 0; //img width
+	let tpHt = 0; //img height
+	
+	let tileW = document.getElementById("tile_width");
+	let tileH = document.getElementById("tile_height");
+	let tileM = document.getElementById("margin");
+	
+	let fillRadio = document.getElementById("radio-fill").children;
+	let fill = 1; //alpha	
+	let fillColor = document.getElementById("color-fill");
+	for (let i = 0; i < fillRadio.length; i++) {
+		fillRadio[i].addEventListener('change', function(e){
+			if(this.value !== fill){fill = i-1}
+		});
+	}
+	
+	let obj = ""
+	
+	let downloadBtn = document.getElementById("download");
+
+	function pasteTexture(e, id){
+		e.preventDefault();
+		console.log(e);
+		//console.log(e.clipboardData.items[0].type);
+		if(e.clipboardData.items[0].type == "image/png"){
+			clipBoardImg = e.clipboardData.items[0].getAsFile();
+			if(id == 0){
+				addTexture(clipBoardImg);
+			}
+		}		
+	}
+	
+	function addTexture(f){
+		let file = null;
+		
+		if(f == null){
+			file = document.getElementById("texinput").files[0];
+		}
+		else{
+			file = f;
+		}
+		
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			//console.log(reader.result);
+			img.src = reader.result;
+			
+			img.onload = function(){
+				canvas.width = img.naturalWidth;
+				canvas.height = img.naturalHeight;
+				tpWd = img.naturalWidth;
+				tpHt = img.naturalHeight;
+				ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);	
+				
+				imginfo.innerHTML = "width: " + tpWd + " height: " + tpHt;
+				
+				//extract alphamap for three.js 
+				let data = ctx.getImageData(0,0,img.naturalWidth,img.naturalHeight);
+				//console.log(data);
+				let imgDataA = ctx.createImageData(tpWd, tpHt);
+				for (let i = 0; i < data.data.length; i += 4) 
+				{                     		
+					imgDataA.data[i] = data.data[i+3]; //r
+					imgDataA.data[i+1] = data.data[i+3]; //g
+					imgDataA.data[i+2] = data.data[i+3]; //b
+					imgDataA.data[i+3] = data.data[i+3]; //a
+				} 
+				//alphaMapCanvas.width = img.naturalWidth;
+				//alphaMapCanvas.height = img.naturalHeight;
+				//canvas.putImageData(imgDataA, 0, 0);
+				//canvash.putImageData(imgDataA, 0, 0);
+				//end alpha map
+				
+				//updateNeeded = true;
+			}
+		}
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			
+		}	
+	}
+	
+	function toMatrix(arr, width){
+	    return arr.reduce(function (rows, key, index) { 
+		    return (index % width == 0 ? rows.push([key]) : rows[rows.length-1].push(key)) && rows;
+	    }, []);
+	}
+	
+	function generateTileset(){
+		
+		// final width = img width + tile num * 2 * margin size
+		console.log("fill: ")
+		console.log(fill)
+		
+		tileNumW = parseInt(tpWd/tileW.value)
+		tileNumH = parseInt(tpHt/tileH.value)
+		
+		margin = parseInt(tileM.value)
+		console.log("margin: " + margin)
+		
+		fWidth  = tpWd + tileNumW * 2 * margin
+		fHeight = tpHt + tileNumH * 2 * margin
+		
+		canvash.width = fWidth;
+		canvash.height = fHeight;
+		
+		console.log("final img width: " + fWidth)
+		console.log("final img height: " + fHeight)
+		console.log("num tiles w: " + tileNumW)
+		console.log("num tiles h: " + tileNumH)
+		
+		console.log("Processing img...")
+		
+		// create an image with the final dimension on the output canvas
+		let imgDataOut = ctxh.createImageData(fWidth, fHeight);
+		
+		//let imgDataIn = ctx.getImageData(0,0,tpWd,tpHt);
+		//let data = imgDataIn.data; // R G B A R G B A ... array
+		
+		// Loop through each row and column of tiles
+		for (let row = 0; row < tileNumW; row++){
+			for (let col = 0; col < tileNumH; col++){
+			  // Calculate the position of the current tile
+			  const x = col * tileW.value;
+			  const y = row * tileH.value;
+
+			  // Draw the current tile onto the output canvaswith margins
+			  ctxh.drawImage(img, x, y, tileW.value, tileH.value, x+margin*2*col + margin, y+margin*2*row + margin, tileW.value, tileH.value);
+			}
+		}
+		
+		ctxh.imageSmoothingEnabled = false;
+		
+		// iterate over the new image and clamp or color the margins
+		
+		if(fill != 1){
+		
+			let skipL = parseInt(tileW.value) + 2*margin
+			let skipT = parseInt(tileH.value) + 2*margin
+			
+			let col = fillColor.value;
+			let r = parseInt(col.substr(1,2), 16)
+			let g = parseInt(col.substr(3,2), 16)
+			let b = parseInt(col.substr(5,2), 16)
+			
+		
+			let imgDataIn = ctxh.getImageData(0,0,fWidth,fHeight);
+			let data = imgDataIn.data;
+			let pixels = [];
+			// Store pixels in rgba arrays
+			for (i = 0; i < data.length; i += 4) 
+			{                     		
+				pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
+			} 
+			// turn the pixel array of arrays into a matrix of rgba arrays
+			let mat = toMatrix(pixels, fWidth);
+
+			// now we iterate to generate clamp or fill with color
+			for (y = 0; y < fHeight; y++){
+				for (x = 0; x < fWidth; x++){
+					
+					if(x % skipL == margin){// subsequent margins left
+						for(m = 0; m <= margin; m++){ //left
+							if(fill == 0 && m > 0)
+								mat[y][x - m] = [r,g,b,255];
+							else
+								mat[y][x - m] = mat[y][x];
+						}
+					}
+
+					if(y % skipT == margin){
+						for(m = 0; m <= margin; m++){
+							if(fill == 0 && m > 0)
+								mat[y - m][x] = [r,g,b,255];
+							else
+								mat[y - m][x] = mat[y][x];
+						}
+					}
+					// clamp right
+					if(x % skipL == parseInt(tileW.value) + margin -1){	
+						for(m = 0; m <= margin; m++){
+							if(fill == 0 && m > 0)
+								mat[y][x + m] = [r,g,b,255];
+							else
+								mat[y][x + m] = mat[y][x];
+						}
+					}
+					// clamp down
+					if(y % skipT == parseInt(tileH.value) + margin -1){
+						for(m = 0; m <= margin; m++){
+							if(fill == 0 && m > 0)
+								mat[y + m][x] = [r,g,b,255];
+							else
+								mat[y + m][x] = mat[y][x];
+						}
+					}
+	
+				}
+			}
+			
+			// now convert the matrix back to pixel array
+			l = 0;
+			for(let i = 0; i < fHeight; i++){
+				for(let j = 0; j < fWidth; j++){
+
+					imgDataIn.data[l] =   mat[i][j][0];
+					imgDataIn.data[l+1] = mat[i][j][1];
+					imgDataIn.data[l+2] = mat[i][j][2];
+					imgDataIn.data[l+3] = mat[i][j][3];
+					l+=4;
+				}
+			}
+			ctxh.putImageData(imgDataIn,0,0);
+			
+			download.download = "paddedTileset.png";
+			download.href = canvash.toDataURL("image/png;base64");
+		}
+		
+	}
+	
+	function addUV(f){
+		let file = null;
+		
+		if(f == null){
+			file = document.getElementById("uvinput").files[0];
+		}
+		else{
+			file = f;
+		}
+		
+		let reader = new FileReader();
+		reader.fileName = file.name
+		reader.onloadend = function () {
+
+			obj = reader.result;
+			
+			uvinfo.innerHTML = reader.fileName;
+			// enable generate button
+			
+			//obj.onload = function(){
+			//	console.log(obj)
+			//}
+		}
+		if (file) {
+			//reader.readAsDataURL(file); //reads the data as a URL
+			reader.readAsText(file);
+		} else {
+			
+		}	
+	}
+	
+	async function recalculateUV(){
+		
+		if( obj == "" ){ alert("Please provide an .obj file") }
+		else {
+		
+			const newHandle = await window.showSaveFilePicker();
+
+			// create a FileSystemWritableFileStream to write to
+			const writableStream = await newHandle.createWritable();
+
+			// split for multi object
+			let obj_arrays = obj.split("o ");
+			let tarrays = obj.split("\n");
+			
+			// calculate the UV steps
+			tileNumW = parseInt(tpWd/tileW.value);
+			tileNumH = parseInt(tpHt/tileH.value);
+			
+			// 1 over the num of tiles
+			uStep = 1.0/tileNumW;
+			vStep = 1.0/tileNumH;
+			
+			fWidth  = tpWd + tileNumW * 2 * margin;
+			fHeight = tpHt + tileNumH * 2 * margin;
+			
+			margin = parseInt(tileM.value);
+			
+			// margin times 1 over img width and height
+			muStep = margin/fWidth;
+			mvStep = margin/fHeight;
+			
+			console.log("margin step: " + muStep);
+			console.log("tile step/2: " + uStep/2.0);
+			
+			// TODO: calculate middle points to find nearest later on
+			miduPs = []
+			midvPs = []
+			for(let i = 0; i < tileNumW; i++){
+				miduPs.push( i*uStep + uStep/2 )
+			}
+			for(let i = 0; i < tileNumH; i++){
+				midvPs.push( i*vStep + vStep/2 )
+			}
+			console.log(miduPs);
+			// first we store the f lines
+			// then we store the vt lines
+			
+			// then we go through f lines
+			// for every triple 0/i/0 - 0/i/0 - 0/i/0 - 0/i/0
+			// we get the UV coords from lines i of the vt lines
+			// with those UVs we know which quad we are at
+			// we can now select the new UVs for all those vt lines
+			
+			// fill our textfile object by object
+			let textFile = ""
+			
+			let vt_lines = [];
+			let new_vt_ids = 0;
+			
+			// fill uv array
+			for(let index = 0; index < tarrays.length; index++){
+				if( tarrays[index].includes("vt") ){
+					vt_lines.push(tarrays[index]);
+				}
+			}
+			
+			
+			for(let ob = 0; ob < obj_arrays.length; ob++){
+			
+				//info
+				uvinfo.innerHTML = "Progress: " + ob + " / " + obj_arrays.length;
+			
+				let arrays = obj_arrays[ob].split("\n");
+				
+				textFile += "o " + arrays[0];
+				
+				//console.log("Ob> " + arrays[0]);
+				
+				let f_lines = [];
+				let new_f_lines = [];
+				let new_vt_lines = [];
+				
+				for(let index = 0; index < arrays.length; index++){
+				
+					//if( arrays[index].includes("vt") ){
+					//	vt_lines.push(arrays[index]);
+					//}
+					if( arrays[index].includes("f ") ){
+						f_lines.push(arrays[index]);
+					}
+				}
+				
+				//console.log("vt lines" + vt_lines);
+				//console.log("f lines"+ f_lines);
+				
+				// check all faces
+				for(let f = 0; f < f_lines.length; f++){
+				
+					faces = f_lines[f].split(" ");
+					
+					// for each triplet on a face
+					midU = 0;
+					midV = 0;
+
+					for(let c = 0; c < faces.length; c++){
+						if(faces[c] != "f"){
+								
+							// the face is in format vertex/uv/normal
+							uv_id = faces[c].split("/")[1] - 1;
+						
+							// get the middle coordinate of the face UVs
+							uv_coords = vt_lines[uv_id].split(" ");
+							
+							if(faces.length == 5)
+							{
+								midU += parseFloat(uv_coords[1]);
+								midV += parseFloat(uv_coords[2]);
+							}
+							else if(c < 3) {
+								midU += parseFloat(uv_coords[1]);
+								midV += parseFloat(uv_coords[2]);
+							}
+
+						}
+					}
+					if(faces.length > 4){
+						midU = midU / (faces.length-1)
+						midV = midV / (faces.length-1)
+					}
+					else {
+						console.log("face with tri")
+						midU = midU / 2;
+						midV = midV / 2;
+						
+						// try to fix triangle coordinates
+						// ensure our coords are ok
+						// find nearest u point
+						
+						let curr = miduPs[0];
+						let diff = Math.abs(midU - curr);
+						for(let i = 0; i < miduPs.length; i++){
+							let err = Math.abs(midU - miduPs[i]);
+							if (err < diff) { 
+								diff = err; 
+								curr = miduPs[i];
+							}
+						}
+						midU = curr;
+						
+						// find nearest v point
+						curr = midvPs[0];
+						diff = Math.abs(midV - curr);
+						for(let i = 0; i < midvPs.length; i++){
+							let err = Math.abs(midV - midvPs[i]);
+							if (err < diff) { 
+								diff = err;
+								curr = midvPs[i];
+							}
+						}
+						midV = curr;
+
+					}
+					
+					
+					
+					
+					//console.log("mid " +  midU)
+					// we got the middle point of the UV coordinates of a face.
+					// now we modify the UV coords to match the recalculated
+					// coords in the array.
+					let new_uv_id_group = []
+					for(let c = 0; c < faces.length; c++){
+						if(faces[c] != "f"){
+								
+							uv_id = faces[c].split("/")[1] - 1;
+
+							uv_coords = vt_lines[uv_id].split(" ");
+							//console.log(uv_coords)
+							//console.log("index of face: " + c);
+							//console.log("uv before:" + vt_lines[uv_id]);
+							// from the mid UV value, add half a resized tile
+							line_str = "vt ";
+							
+							if(uv_coords[1] < midU){
+								line_str += Number((midU - (uStep/2.0) + muStep).toFixed(6)) + " ";
+							}
+							else if (uv_coords[1] > midU) {
+								line_str += Number((midU + (uStep/2.0) - muStep).toFixed(6)) + " ";
+							}
+							else {
+								console.log("midu is equal");
+								//keep original
+								line_str += uv_coords[1] + " ";
+								//line_str += Number((midU + (uStep/2.0) - muStep).toFixed(6)) + " ";
+							}
+							 
+							if(uv_coords[2] < midV){
+								line_str += Number((midV - (vStep/2.0) + mvStep).toFixed(6)) + "";
+							}
+							else if (uv_coords[2] > midV){  
+								line_str += Number((midV + (vStep/2.0) - mvStep).toFixed(6)) + "";
+							}
+							else {
+								console.log("midv is equal");
+								//keep original
+								line_str += uv_coords[2] + "";
+								//line_str += Number((midV + (vStep/2.0) - mvStep).toFixed(6)) + "";
+							}
+							
+							//used_ids.push(uv_id);
+							
+							//console.log(line_str);
+							//vt_lines[uv_id] = line_str;
+							new_vt_lines[new_vt_ids] = line_str;
+							new_uv_id_group.push(new_vt_ids);
+							new_vt_ids += 1;
+							
+						}
+					}
+					
+					//build new f line with the new uv ids
+					
+					let line = f_lines[f].split("/"); // 1. 3. 5. 7.
+					let itab = [1,3,5,7];
+					for(let i = 0; i < new_uv_id_group.length; i++){
+						line[ itab[i] ] = new_uv_id_group[i] + 1; //add 1 because UV indexes start from 1 in obj files
+					}
+
+					let recon_line = "";
+					for(let i = 0; i < line.length; i++){
+						
+						if(i == line.length -1){
+							recon_line += line[i] + "";
+						}
+						else {
+							recon_line += line[i] + "/";
+						}
+						
+					}
+					new_f_lines.push(recon_line);
+					
+				}
+				//console.log(new_f_lines);
+				//console.log(vt_lines);
+				vt_count = 0;
+				
+				// clear facesk, s0 and uvs from current object
+				for(let index = 0; index < arrays.length; index++){
+					
+					if( arrays[index].includes("vt ") || arrays[index].includes("f ") || arrays[index].includes("s0")){
+						arrays[index] = "#ignore"
+					}
+				}
+				
+				console.log(new_vt_lines)
+				for(let i = 0; i < new_vt_lines.length; i++){
+					arrays.push(new_vt_lines[i]);
+				}
+				arrays.push("s 0");
+				for(let i = 0; i < new_f_lines.length; i++){
+					arrays.push(new_f_lines[i]);
+				}
+				for(let s = 0; s < arrays.length; s++){
+					if(arrays[s] != "" && arrays[s] != "undefined" && arrays[s] != "#ignore" && typeof(arrays[s]) !== "undefined")
+					{
+						textFile += arrays[s] + "\n";
+					}		
+				}
+				// push to file
+				//console.log(textFile);
+				await writableStream.write(textFile);
+				
+				// clear buffer
+				textFile = [];
+	
+			}// end looping through objects
+				
+			// close the file and write the contents to disk.
+			await writableStream.close();
+			uvinfo.innerHTML = "Finished!"
+			// auto download file
+			/*
+			let e = document.createElement('a');
+			e.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textFile));
+			e.setAttribute('download', "recalculatedUVs.obj");
+			e.style.display = 'none';
+			document.body.appendChild(e);
+			e.click();
+			document.body.removeChild(e);
+			*/
+		}
+	}
+</script>
+</body>
+</html>
